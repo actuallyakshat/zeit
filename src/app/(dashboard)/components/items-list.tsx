@@ -1,14 +1,22 @@
 // items-list.tsx
 import {
+  PopoverTrigger,
+  PopoverContent,
+  Popover,
+} from "@/components/ui/popover";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getTimeToAfford } from "@/lib/price-to-time-calculation";
-import { WishlistItem } from "@/service/wishlist-item/get-wishlist-items";
-import { ArrowRight } from "lucide-react";
+import { WishlistItem } from "@/service/wishlist-item/server/get-wishlist-items";
+import { ArrowRight, Ellipsis } from "lucide-react";
 import Link from "next/link";
+import AddItemDialog from "./add-item-dialog";
+import React from "react";
+import ConfirmDeleteDialog from "./confirm-delete-dialog";
 
 export type ItemsListProps = {
   readonly purchased: boolean;
@@ -69,7 +77,10 @@ export function ItemCard({
         </div>
       )}
       <div className="mt-4">
-        <h2 className="text-xl mb-1">{item.title}</h2>
+        <div className="flex items-center gap-2 justify-between">
+          <h2 className="text-xl mb-1">{item.title}</h2>
+          <ItemActions item={item} />
+        </div>
         <DescriptionWithToolTip
           description={item.description || "No description"}
         />
@@ -118,3 +129,73 @@ function DescriptionWithToolTip({
     </TooltipProvider>
   );
 }
+
+function ItemActions({ item }: { readonly item: WishlistItem }) {
+  return (
+    <Popover>
+      <PopoverTrigger>
+        <Ellipsis className="stroke-1 size-5" />
+      </PopoverTrigger>
+      <PopoverContent className="p-0 w-40">
+        <div className="flex flex-col gap-1">
+          <AddItemDialog
+            isEdit
+            item={item}
+            customTrigger={<EditItemDialogTrigger item={item} />}
+          />
+          <ConfirmDeleteDialog
+            itemId={item.id}
+            customTrigger={<DeleteItemDialogTrigger item={item} />}
+          />
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+const ItemActionsButton = React.forwardRef<
+  HTMLButtonElement,
+  {
+    item: WishlistItem;
+    children: React.ReactNode;
+    onClick?: () => void;
+  } & React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ item, children, onClick, ...props }, ref) => {
+  return (
+    <button
+      ref={ref}
+      {...props}
+      className="hover:bg-accent text-sm font-medium text-left py-1.5 px-3 w-full"
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+});
+
+const EditItemDialogTrigger = React.forwardRef<
+  HTMLButtonElement,
+  { item: WishlistItem }
+>(({ item, ...props }, ref) => {
+  return (
+    <ItemActionsButton item={item} ref={ref} {...props}>
+      Edit
+    </ItemActionsButton>
+  );
+});
+
+const DeleteItemDialogTrigger = React.forwardRef<
+  HTMLButtonElement,
+  { item: WishlistItem }
+>(({ item, ...props }, ref) => {
+  return (
+    <ItemActionsButton item={item} ref={ref} {...props}>
+      Delete
+    </ItemActionsButton>
+  );
+});
+
+//display name
+DeleteItemDialogTrigger.displayName = "DeleteItemDialogTrigger";
+EditItemDialogTrigger.displayName = "EditItemDialogTrigger";
+ItemActionsButton.displayName = "ItemActionsButton";

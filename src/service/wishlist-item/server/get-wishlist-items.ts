@@ -22,7 +22,7 @@ export type WishlistItem = {
  */
 export async function getWishlistItems(): Promise<WishlistItem[]> {
   const { userId: clerkUserId } = await auth();
-  
+
   if (!clerkUserId) {
     throw new Error("Unauthorized");
   }

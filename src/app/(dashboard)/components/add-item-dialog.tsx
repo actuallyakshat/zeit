@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,10 +12,23 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { createWishlistItem } from "@/service/wishlist-item/wishlist-item";
+import {
+  createWishlistItem,
+  updateWishlistItem,
+} from "@/service/wishlist-item/wishlist-item";
 import { ItemCard } from "./items-list";
+import { WishlistItem } from "@/service/wishlist-item/server/get-wishlist-items";
+import { Checkbox } from "@/components/ui/checkbox";
 
-export default function AddItemDialog() {
+export default function AddItemDialog({
+  isEdit,
+  item,
+  customTrigger,
+}: {
+  readonly isEdit?: boolean;
+  readonly item?: WishlistItem;
+  readonly customTrigger?: React.ReactNode;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -23,7 +36,19 @@ export default function AddItemDialog() {
   const [imageUrl, setImageUrl] = useState("");
   const [price, setPrice] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [purchased, setPurchased] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (isEdit) {
+      setTitle(item?.title || "");
+      setDescription(item?.description || "");
+      setUrl(item?.url || "");
+      setImageUrl(item?.imageUrl || "");
+      setPrice(item?.price?.toString() || "");
+      setPurchased(item?.purchased || false);
+    }
+  }, [isEdit, item]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -78,18 +103,59 @@ export default function AddItemDialog() {
     }
   };
 
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      await updateWishlistItem({
+        id: item?.id || "",
+        title,
+        description: description || undefined,
+        url: url || undefined,
+        imageUrl: imageUrl || undefined,
+        price: Number(price),
+        purchased,
+      });
+
+      // Reset form
+      setTitle("");
+      setDescription("");
+      setUrl("");
+      setImageUrl("");
+      setPrice("");
+      setErrors({});
+
+      // Close dialog
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Error updating wishlist item:", error);
+      // In a real app, you might want to show a toast or error message to the user
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">Add New Item</Button>
+        {customTrigger || <Button variant="default">Add New Item</Button>}
       </DialogTrigger>
       <DialogContent className="sm:max-w-5xl overflow-y-auto flex gap-6">
         <div className="flex-[3]">
-          <form onSubmit={handleSubmit} className="w-full">
+          <form
+            onSubmit={isEdit ? handleUpdate : handleSubmit}
+            className="w-full"
+          >
             <DialogHeader>
               <DialogTitle>Add New Item</DialogTitle>
               <DialogDescription>
-                Add a new item to your wishlist. Click save when you're done.
+                Add a new item to your wishlist. Click save when you&apos;re
+                done.
               </DialogDescription>
             </DialogHeader>
             <div className="gap-4 py-4 flex flex-1  h-full flex-col justify-center">
@@ -163,6 +229,22 @@ export default function AddItemDialog() {
                     onChange={(e) => setPrice(e.target.value)}
                     className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                     placeholder="999"
+                  />
+                  {errors.price && (
+                    <p className="text-sm text-red-500 mt-1">{errors.price}</p>
+                  )}
+                </div>
+                <Label htmlFor="price" className="text-right">
+                  Purchased?
+                </Label>
+                <div className="col-span-3">
+                  <Checkbox
+                    className="size-5"
+                    id="purchased"
+                    checked={purchased}
+                    onCheckedChange={(checked) =>
+                      setPurchased(checked as boolean)
+                    }
                   />
                   {errors.price && (
                     <p className="text-sm text-red-500 mt-1">{errors.price}</p>

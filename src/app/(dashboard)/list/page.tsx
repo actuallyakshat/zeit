@@ -2,31 +2,36 @@ import { SeparatorBorder } from "@/components/ui/seperator";
 import {
   getWishlistItems,
   WishlistItem,
-} from "@/service/wishlist-item/get-wishlist-items";
-import { auth } from "@clerk/nextjs/server";
+} from "@/service/wishlist-item/server/get-wishlist-items";
+import { Suspense } from "react";
 import Header from "../components/header";
 import ItemsWrapper from "../components/items-wrapper";
 import Stats from "../components/stats";
+import { Loader } from "lucide-react";
 
 export default async function DashboardPage() {
-  const { userId } = await auth();
-  let wishlistItems: WishlistItem[] | undefined = [];
-
-  if (userId) {
-    try {
-      wishlistItems = await getWishlistItems();
-    } catch (error) {
-      console.error("Failed to fetch wishlist items:", error);
-      //TODO: handle error gracefully
-    }
-  }
+  const wishlistItems: Promise<WishlistItem[] | undefined> = getWishlistItems();
 
   return (
     <div className="h-full w-full flex flex-col flex-1">
-      <Header />
+      <Suspense fallback={null}>
+        <Header />
+      </Suspense>
       <Stats />
       <SeparatorBorder className="h-12" />
-      <ItemsWrapper initialItems={wishlistItems} />
+      <Suspense fallback={<LoadingItems />}>
+        <ItemsWrapper dataPromise={wishlistItems} />
+      </Suspense>
+    </div>
+  );
+}
+
+function LoadingItems() {
+  return (
+    <div>
+      <h2 className="flex items-center gap-4 text-2xl tracking-tight p-8">
+        Fetching your wishlist <Loader className="animate-spin size-7" />
+      </h2>
     </div>
   );
 }

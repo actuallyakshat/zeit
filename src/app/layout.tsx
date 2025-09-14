@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/sonner";
 import IndexProvider from "@/context/IndexProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
@@ -41,7 +42,8 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <Toaster />
+      <html lang="en" suppressHydrationWarning>
         <head>
           <meta name="apple-mobile-web-app-title" content="Zeit" />
         </head>

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import CTAButton from "@/components/ui/cta-button";
 import { SeparatorBorder } from "@/components/ui/seperator";
-import { WishlistItem } from "@/service/wishlist-item/get-wishlist-items";
+import { WishlistItem } from "@/service/wishlist-item/server/get-wishlist-items";
 import { GithubIcon } from "lucide-react";
 import Link from "next/link";
 import { ItemCard } from "./(dashboard)/components/items-list";
@@ -127,8 +127,7 @@ const items: WishlistItem[] = [
   },
   {
     title: "Trip to London",
-    description:
-      "Anything to catch a game at the Emirates Stadium, Anything to catch a game at the Emirates Stadium , Anything to catch a game at the Emirates Stadium",
+    description: "Anything to catch a game at the Emirates Stadium",
     url: "https://example.com/item",
     imageUrl:
       "https://images.squarespace-cdn.com/content/v1/6397e1ebbb148c2e8ac0b037/28bd2e1a-71d4-4dbf-b8a9-b34bdee409a8/London_1_2019-4508.jpg",

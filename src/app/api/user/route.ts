@@ -1,6 +1,6 @@
-import { SyncUserRequest } from "@/app/dto/user/sync-user";
 import { db } from "@/db/drizzle";
 import { user } from "@/db/schema";
+import { SyncUserRequest } from "@/service/user/user";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 

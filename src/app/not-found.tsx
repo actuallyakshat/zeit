@@ -16,7 +16,7 @@ export default function NotFoundPage() {
         </p>
         <Button asChild variant={"outline"} className="mt-6">
           <Link href="/" className="mt-6 px-4 py-2.5 bg-accent shadow rounded">
-            Let's get you home safely
+            Let&apos;s get you home safely
           </Link>
         </Button>
       </div>

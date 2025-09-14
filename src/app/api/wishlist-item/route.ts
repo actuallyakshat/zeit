@@ -39,7 +39,8 @@ export async function POST(req: NextRequest) {
       })
       .returning();
 
-    revalidatePath("/dashboard");
+    revalidatePath("/(dashboard)/list");
+    revalidatePath("/list");
 
     return NextResponse.json({ item: newItem });
   } catch (error) {
