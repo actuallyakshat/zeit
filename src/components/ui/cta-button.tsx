@@ -7,7 +7,7 @@ import { ArrowRightIcon } from "lucide-react";
 export default function CTAButton() {
   const { isSignedIn } = useClerk();
 
-  const path = isSignedIn ? "/list" : "/signin";
+  const path = isSignedIn ? "/list" : "/sign-in";
 
   return (
     <Button asChild>

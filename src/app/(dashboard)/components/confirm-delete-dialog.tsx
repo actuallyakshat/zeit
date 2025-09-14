@@ -55,7 +55,9 @@ export default function ConfirmDeleteDialog({
           irreversible.
         </DialogDescription>
         <DialogFooter>
-          <Button variant="default">Cancel</Button>
+          <Button variant="default" onClick={() => setIsOpen(false)}>
+            Cancel
+          </Button>
           <Button
             disabled={loading}
             variant="destructive"

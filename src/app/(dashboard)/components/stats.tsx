@@ -1,39 +1,80 @@
-import React from "react";
+"use client";
+import { WishlistItem } from "@/service/wishlist-item/server/get-wishlist-items";
+import React, { use } from "react";
+import { useAuth } from "@/context/AuthProvider";
+import { getTimeToAffordRouter } from "@/lib/price-to-time-calculation";
 
-const TIME_SPENT_STRING = "23 hours";
-const TIME_REQUIRED_STRING = "7 months, 2 weeks, and 10 days";
-const ITEMS_BOUGHT = 5;
-const ITEMS_IN_WISHLIST = 18;
+export default function Stats({
+  dataPromise,
+}: {
+  dataPromise: Promise<WishlistItem[] | undefined>;
+}) {
+  const initialItems = use(dataPromise);
+  const { user } = useAuth();
 
-export default function Stats() {
+  const itemsInWishlist =
+    initialItems?.filter((item) => item.purchased === false) || [];
+
+  const itemsBought =
+    initialItems?.filter((item) => item.purchased === true) || [];
+
+  const totalSpent = itemsBought
+    .map((item) => item.price || 0)
+    .reduce((acc, price) => {
+      return acc + price;
+    }, 0);
+
+  const timeRemaining = itemsInWishlist
+    .map((item) => item.price || 0)
+    .reduce((acc, price) => {
+      return acc + price;
+    }, 0);
+
+  // Calculate time values based on user's income
+  const timeSpentString = user?.monthlyIncome
+    ? getTimeToAffordRouter(
+        totalSpent,
+        user.monthlyIncome,
+        user.numberOfWorkingDays || undefined
+      )
+    : "Set your income in settings";
+
+  const timeRequiredString = user?.monthlyIncome
+    ? getTimeToAffordRouter(
+        timeRemaining,
+        user.monthlyIncome,
+        user.numberOfWorkingDays || undefined
+      )
+    : "Set your income in settings";
+
+  const itemsInWishlistCount = itemsInWishlist.length;
+  const itemsBoughtCount = itemsBought.length;
+
   return (
     <div className="grid grid-cols-4 border border-dashed">
-      <TimeSpentCard />
-      <TimeRequiredCard />
-      <ItemsInWishlistCard />
-      <ItemsBoughtCard />
+      <TimeSpentCard timeSpent={timeSpentString} />
+      <TimeRequiredCard timeRequired={timeRequiredString} />
+      <ItemsInWishlistCard count={itemsInWishlistCount} />
+      <ItemsBoughtCard count={itemsBoughtCount} />
     </div>
   );
 }
 
-function TimeSpentCard() {
-  return <Card title="Time Spent" content={TIME_SPENT_STRING}></Card>;
+function TimeSpentCard({ timeSpent }: { timeSpent: string }) {
+  return <Card title="Time Spent" content={timeSpent}></Card>;
 }
-function TimeRequiredCard() {
-  return <Card title="Time Required" content={TIME_REQUIRED_STRING}></Card>;
+
+function TimeRequiredCard({ timeRequired }: { timeRequired: string }) {
+  return <Card title="Time Required" content={timeRequired}></Card>;
 }
-function ItemsInWishlistCard() {
+
+function ItemsInWishlistCard({ count }: { count: number }) {
+  return <Card title="Items in Wishlist" content={String(count)}></Card>;
+}
+
+function ItemsBoughtCard({ count }: { count: number }) {
   return (
-    <Card title="Items in Wishlist" content={String(ITEMS_IN_WISHLIST)}></Card>
-  );
-}
-function ItemsBoughtCard() {
-  return (
-    <Card
-      title="Items Purchased"
-      content={String(ITEMS_BOUGHT)}
-      hideBorder
-    ></Card>
+    <Card title="Items Purchased" content={String(count)} hideBorder></Card>
   );
 }
 

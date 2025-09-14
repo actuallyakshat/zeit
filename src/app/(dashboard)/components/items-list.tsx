@@ -1,8 +1,9 @@
-// items-list.tsx
+"use client";
+
 import {
-  PopoverTrigger,
-  PopoverContent,
   Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import {
   Tooltip,
@@ -10,12 +11,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getTimeToAfford } from "@/lib/price-to-time-calculation";
+import { useAuth } from "@/context/AuthProvider";
+import { getTimeToAffordRouter } from "@/lib/price-to-time-calculation";
 import { WishlistItem } from "@/service/wishlist-item/server/get-wishlist-items";
 import { ArrowRight, Ellipsis } from "lucide-react";
 import Link from "next/link";
-import AddItemDialog from "./add-item-dialog";
 import React from "react";
+import AddItemDialog from "./add-item-dialog";
 import ConfirmDeleteDialog from "./confirm-delete-dialog";
 
 export type ItemsListProps = {
@@ -26,6 +28,10 @@ export type ItemsListProps = {
 export default function ItemsList({ purchased, items }: ItemsListProps) {
   // Filter items based on purchased status
   const filteredItems = items.filter((item) => item.purchased === purchased);
+
+  const { isLoading } = useAuth();
+
+  if (isLoading) return null;
 
   return (
     <div className="border-x border-dashed flex-1">
@@ -38,8 +44,6 @@ export default function ItemsList({ purchased, items }: ItemsListProps) {
   );
 }
 
-const MONTHLY_INCOME_FROM_DB = 70000; // Example monthly income, replace with actual data source
-
 export function ItemCard({
   index,
   item,
@@ -49,6 +53,8 @@ export function ItemCard({
   readonly index: number;
   readonly preview?: boolean;
 }) {
+  const { user } = useAuth();
+
   // Format price as currency
   const formattedPrice = new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -56,11 +62,14 @@ export function ItemCard({
   }).format(item.price);
 
   let monthlyIncome;
+  const numberOfWorkingDays = user?.useWorkingDaysForCalculation
+    ? user?.numberOfWorkingDays || undefined
+    : undefined;
 
   if (preview) {
     monthlyIncome = 70000;
   } else {
-    monthlyIncome = MONTHLY_INCOME_FROM_DB;
+    monthlyIncome = user?.monthlyIncome;
   }
 
   return (
@@ -79,21 +88,26 @@ export function ItemCard({
       <div className="mt-4">
         <div className="flex items-center gap-2 justify-between">
           <h2 className="text-xl mb-1">{item.title}</h2>
-          <ItemActions item={item} />
+          {!preview && <ItemActions item={item} />}
         </div>
         <DescriptionWithToolTip
           description={item.description || "No description"}
         />
         <p className="mt-1 text-base font-light">{formattedPrice}</p>
         <h3 className="font-semibold text-lg mt-2">
-          {getTimeToAfford(item.price, monthlyIncome)} of your time
+          {getTimeToAffordRouter(
+            item.price,
+            monthlyIncome || 0,
+            numberOfWorkingDays
+          )}{" "}
+          {`of your ${numberOfWorkingDays ? "working" : ""} time`}
         </h3>
         {item.url && (
           <Link
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 flex text-sky-700 items-center gap-2 group"
+            className="mt-2 flex dark:text-sky-400 text-sky-700 items-center gap-2 group"
           >
             View Item{" "}
             <ArrowRight

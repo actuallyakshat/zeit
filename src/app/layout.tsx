@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import IndexProvider from "@/context/IndexProvider";
 import { ClerkProvider } from "@clerk/nextjs";
+import { ThemeProvider } from "next-themes";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -37,24 +38,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  readonly children: React.ReactNode;
+}) {
   return (
-    <ClerkProvider>
-      <Toaster />
-      <html lang="en" suppressHydrationWarning>
-        <head>
-          <meta name="apple-mobile-web-app-title" content="Zeit" />
-        </head>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="apple-mobile-web-app-title" content="Zeit" />
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <IndexProvider>
-          <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-          >
-            <main>{children}</main>
-          </body>
+          <main>{children}</main>
         </IndexProvider>
-      </html>
-    </ClerkProvider>
+      </body>
+    </html>
   );
 }

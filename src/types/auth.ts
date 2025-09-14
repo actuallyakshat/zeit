@@ -9,4 +9,6 @@ export interface AuthContextInterface {
   clerkUser: UserResource | null | undefined;
   isAuthenticated: boolean;
   signOut: () => void;
+  refetchUser: () => Promise<void>;
+  isLoading: boolean;
 }

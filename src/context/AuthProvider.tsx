@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { user: clerkUser, isSignedIn } = useUser();
   const { signOut } = useClerk();
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   // Upsert user to database when they sign in
   useEffect(() => {
@@ -19,11 +20,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (!clerkUser) return;
 
       try {
+        setIsLoading(true);
         const dbUser = await upsertUser(clerkUser);
         setUser(dbUser);
         setIsAuthenticated(true);
       } catch (error) {
         console.error("Error upserting user:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -41,12 +45,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await signOut();
   };
 
+  const refetchUser = async () => {
+    if (!clerkUser) return;
+    const dbUser = await upsertUser(clerkUser);
+    setUser(dbUser);
+  };
+
   const value = useMemo(
     () => ({
       user,
       clerkUser,
       isAuthenticated,
       signOut: handleSignOut,
+      refetchUser,
+      isLoading,
     }),
     [user, clerkUser, isAuthenticated, handleSignOut]
   );

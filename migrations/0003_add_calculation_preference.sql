@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN "use_working_days_for_calculation" boolean DEFAULT true;

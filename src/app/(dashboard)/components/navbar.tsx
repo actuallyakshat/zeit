@@ -1,15 +1,20 @@
 "use client";
 
+import { AnimatedThemeToggler } from "@/components/magicui/animated-theme-toggler";
+import { useAuth } from "@/context/AuthProvider";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Navbar() {
+  const { signOut } = useAuth();
   const pathname = usePathname();
   const [onListPage, setOnListPage] = useState(false);
+  const [onSettingsPage, setOnSettingsPage] = useState(false);
 
   useEffect(() => {
     setOnListPage(pathname.includes("/list"));
+    setOnSettingsPage(pathname.includes("/settings"));
   }, [pathname]);
 
   return (
@@ -24,10 +29,16 @@ export default function Navbar() {
           </Link>
         )}
       </div>
-      <div>
+      <div className="space-x-4">
+        {onSettingsPage && (
+          <button onClick={signOut} className="hover:underline">
+            Logout
+          </button>
+        )}
         <Link href="/settings" className="hover:underline">
           Settings
         </Link>
+        <AnimatedThemeToggler />
       </div>
     </div>
   );

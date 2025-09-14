@@ -8,6 +8,27 @@
       "when": 1757780407768,
       "tag": "0000_peaceful_pyro",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757872297126,
+      "tag": "0001_hesitant_mattie_franklin",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757872415191,
+      "tag": "0002_tough_bastion",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1757875338892,
+      "tag": "0003_add_calculation_preference",
+      "breakpoints": true
     }
   ]
 }

@@ -1,4 +1,3 @@
-// items-wrapper.tsx
 "use client";
 
 import useToggleListType from "@/hooks/useToggleListType";
@@ -21,7 +20,9 @@ export default function ItemsWrapper({
       </p>
     );
 
-  console.log("data");
+  const itemsData = initialItems.filter((item) =>
+    purchased === true ? item.purchased : !item.purchased
+  );
 
-  return <ItemsList purchased={purchased ?? false} items={initialItems} />;
+  return <ItemsList purchased={purchased ?? false} items={itemsData} />;
 }

@@ -9,6 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
+  //user information
   id: uuid("id")
     .primaryKey()
     .default(sql`gen_random_uuid()`),
@@ -16,6 +17,15 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   username: text("username").notNull().unique(),
   clerkId: text("clerk_id").notNull().unique(),
+
+  //information related to calculation
+  monthlyIncome: integer("monthly_income"),
+  numberOfWorkingDays: integer("number_of_working_days"),
+  useWorkingDaysForCalculation: boolean(
+    "use_working_days_for_calculation"
+  ).default(true),
+
+  //record metadata
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

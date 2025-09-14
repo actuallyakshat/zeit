@@ -6,6 +6,7 @@ export type CreateWishlistItemRequest = {
   url?: string;
   imageUrl?: string;
   price: number;
+  purchased: boolean;
 };
 
 /**

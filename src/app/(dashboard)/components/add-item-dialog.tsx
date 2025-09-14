@@ -83,6 +83,7 @@ export default function AddItemDialog({
         url: url || undefined,
         imageUrl: imageUrl || undefined,
         price: Number(price),
+        purchased: purchased,
       });
 
       // Reset form
@@ -129,6 +130,7 @@ export default function AddItemDialog({
       setImageUrl("");
       setPrice("");
       setErrors({});
+      setPurchased(false);
 
       // Close dialog
       setIsOpen(false);

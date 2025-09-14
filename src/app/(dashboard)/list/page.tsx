@@ -8,16 +8,25 @@ import Header from "../components/header";
 import ItemsWrapper from "../components/items-wrapper";
 import Stats from "../components/stats";
 import { Loader } from "lucide-react";
+import OnboardUser from "../components/onboard-user";
+import { needsOnboarding } from "@/service/user/server/needs-onboarding";
 
 export default async function DashboardPage() {
   const wishlistItems: Promise<WishlistItem[] | undefined> = getWishlistItems();
+  const userNeedsOnboarding = await needsOnboarding();
+
+  if (userNeedsOnboarding) {
+    return <OnboardUser />;
+  }
 
   return (
     <div className="h-full w-full flex flex-col flex-1">
       <Suspense fallback={null}>
         <Header />
       </Suspense>
-      <Stats />
+      <Suspense fallback={null}>
+        <Stats dataPromise={wishlistItems} />
+      </Suspense>
       <SeparatorBorder className="h-12" />
       <Suspense fallback={<LoadingItems />}>
         <ItemsWrapper dataPromise={wishlistItems} />
@@ -34,4 +43,8 @@ function LoadingItems() {
       </h2>
     </div>
   );
+}
+
+function StatsSkeleton() {
+  return <div className="grid grid-cols-4 border border-dashed"></div>;
 }

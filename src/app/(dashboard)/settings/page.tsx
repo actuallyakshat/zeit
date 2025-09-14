@@ -1,4 +1,4 @@
-import React from "react";
+import CalculationDetailsForm from "./components/calculation-details-form";
 
 export default function Settings() {
   return (
@@ -8,6 +8,7 @@ export default function Settings() {
         Customise Zeit to suit your needs. Edit your monthly income, number of
         working days, and calculation parameters.
       </p>
+      <CalculationDetailsForm />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { CreateWishlistItemRequest } from "@/service/wishlist-item/wishlist-item";
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const body = await req.json();
+    const body: CreateWishlistItemRequest = await req.json();
 
     // Create new wishlist item
     const [newItem] = await db
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
         url: body.url,
         imageUrl: body.imageUrl,
         price: body.price,
-        purchased: false,
+        purchased: body.purchased,
       })
       .returning();
 
