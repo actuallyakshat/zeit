@@ -20,6 +20,22 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Authentication
+
+This project uses [Clerk](https://clerk.com) for authentication. To set up authentication:
+
+1. Create a Clerk account at [https://clerk.com](https://clerk.com)
+2. Create a new application in your Clerk dashboard
+3. Copy your Publishable Key and Secret Key from the API Keys section
+4. Add these keys to your `.env.local` file:
+
+```bash
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
+CLERK_SECRET_KEY=YOUR_SECRET_KEY
+```
+
+Replace `YOUR_PUBLISHABLE_KEY` and `YOUR_SECRET_KEY` with your actual keys from the Clerk dashboard.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

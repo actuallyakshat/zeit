@@ -1,103 +1,152 @@
-import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import CTAButton from "@/components/ui/cta-button";
+import { SeparatorBorder } from "@/components/ui/seperator";
+import { WishlistItem } from "@/service/wishlist-item/get-wishlist-items";
+import { GithubIcon } from "lucide-react";
+import Link from "next/link";
+import { ItemCard } from "./(dashboard)/components/items-list";
+import PronunciationButton from "@/components/ui/pronunciation-button";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="max-w-screen-xl w-full h-screen flex flex-col mx-auto">
+      <CTASection />
+      <SeparatorBorder className="h-7" />
+      <Features />
+    </div>
+  );
+}
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+function Features() {
+  const features = [
+    {
+      title: "Time-Based Insights",
+      description:
+        "See how much time you'll need to work to afford each item on your wishlist, based on your monthly income.",
+    },
+    {
+      title: "Smart Budgeting",
+      description:
+        "Prioritize purchases by comparing the time cost of items and make smarter spending decisions.",
+    },
+    {
+      title: "Chrome Extension",
+      description:
+        "Manage your wishlist without ever leaving your favourite shopping website.",
+    },
+  ];
+
+  return (
+    <div className="flex-[1] p-10 grid grid-cols-3 border-x border-dashed gap-4 md:grid">
+      {features.map((feature) => (
+        <FeatureCard
+          key={feature.title}
+          title={feature.title}
+          description={feature.description}
+        />
+      ))}
+    </div>
+  );
+}
+
+function FeatureCard({
+  title,
+  description,
+}: {
+  readonly title: string;
+  readonly description: string;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <h1 className="text-xl">{title}</h1>
+      <p>{description}</p>
+    </div>
+  );
+}
+
+function CTASection() {
+  return (
+    <div className="flex-[4] p-12 border-x border-dashed">
+      <h1 className="text-8xl mt-4 tracking-tight text-balance">
+        Your Wishlist, <br />
+        Measured in Time.
+      </h1>
+
+      <p className="flex mt-4 mb-3 text-lg items-center gap-1.5">
+        Introducing <span className="font-semibold">Zeit</span>
+        <PronunciationButton />
+        <em>Zeit</em> (pronounced <em>/tsaɪt/</em>, like “tsite”)
+      </p>
+
+      <p className=" text-lg text-muted-foreground max-w-xl">
+        Transform your shopping wishlist into a time-saving plan. Prioritize
+        your desires and make every moment count.
+      </p>
+      <div className="mt-8 flex gap-3">
+        <CTAButton />
+        <Button variant={"outline"} className="" asChild>
+          <Link href="https://github.com/actuallyakshat/zeit" target="_blank">
+            Got ideas for Zeit? Contribute Today <GithubIcon />
+          </Link>
+        </Button>
+      </div>
+
+      <div className="mt-4">
+        <LandingItemCardsSection />
+      </div>
+    </div>
+  );
+}
+
+const items: WishlistItem[] = [
+  {
+    title: "iPhone 17 Air",
+    description: "Curious about the bend test really.",
+    url: "https://www.apple.com/in/iphone-air/",
+    imageUrl:
+      "https://www.apple.com/v/iphone/home/ce/images/overview/select/iphone_air__f0t56fef3oey_large_2x.jpg",
+    price: 119900,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    purchased: false,
+    id: "preview-id",
+    userId: "preview-user",
+  },
+  {
+    title: "Bottega Veneta Bag",
+    description: "Ciao Ciao, Autumn handbag because why not",
+    url: "https://www.bottegaveneta.com/en-us/ciao-ciao-autumn-fondant-836083V5QB08354.html",
+    imageUrl:
+      "https://bottega-veneta.dam.kering.com/m/25836dbf1df8bdfb/Large-836083V5QB08354_A.jpg?v=1",
+    price: 556122.96,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    purchased: false,
+    id: "preview-id",
+    userId: "preview-user",
+  },
+  {
+    title: "Trip to London",
+    description:
+      "Anything to catch a game at the Emirates Stadium, Anything to catch a game at the Emirates Stadium , Anything to catch a game at the Emirates Stadium",
+    url: "https://example.com/item",
+    imageUrl:
+      "https://images.squarespace-cdn.com/content/v1/6397e1ebbb148c2e8ac0b037/28bd2e1a-71d4-4dbf-b8a9-b34bdee409a8/London_1_2019-4508.jpg",
+    price: 230000,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    purchased: false,
+    id: "preview-id",
+    userId: "preview-user",
+  },
+];
+
+function LandingItemCardsSection() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {items.map((item, index) => (
+        <ItemCard key={item.title} index={index} item={item} preview={true} />
+      ))}
     </div>
   );
 }
