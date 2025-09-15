@@ -1,7 +1,4 @@
-import { Toaster } from "@/components/ui/sonner";
 import IndexProvider from "@/context/IndexProvider";
-import { ClerkProvider } from "@clerk/nextjs";
-import { ThemeProvider } from "next-themes";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";

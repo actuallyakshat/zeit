@@ -34,7 +34,7 @@ export default function Stats({
   const timeSpentString = user?.monthlyIncome
     ? getTimeToAffordRouter(
         totalSpent,
-        user.monthlyIncome,
+        Number(user.monthlyIncome),
         user.numberOfWorkingDays || undefined
       )
     : "Set your income in settings";
@@ -42,7 +42,7 @@ export default function Stats({
   const timeRequiredString = user?.monthlyIncome
     ? getTimeToAffordRouter(
         timeRemaining,
-        user.monthlyIncome,
+        Number(user.monthlyIncome),
         user.numberOfWorkingDays || undefined
       )
     : "Set your income in settings";

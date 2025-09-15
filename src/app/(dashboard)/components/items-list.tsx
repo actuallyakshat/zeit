@@ -97,7 +97,7 @@ export function ItemCard({
         <h3 className="font-semibold text-lg mt-2">
           {getTimeToAffordRouter(
             item.price,
-            monthlyIncome || 0,
+            Number(monthlyIncome) || 0,
             numberOfWorkingDays
           )}{" "}
           {`of your ${numberOfWorkingDays ? "working" : ""} time`}
