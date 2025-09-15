@@ -61,8 +61,6 @@ export function ItemCard({
     currency: "INR",
   }).format(item.price);
 
-  console.log("user", user);
-
   let monthlyIncome;
   const numberOfWorkingDays = user?.useWorkingDaysForCalculation
     ? user?.numberOfWorkingDays || undefined
@@ -73,8 +71,6 @@ export function ItemCard({
   } else {
     monthlyIncome = user?.monthlyIncome;
   }
-
-  console.log("monthlyIncome", monthlyIncome);
 
   return (
     <div className="p-4">

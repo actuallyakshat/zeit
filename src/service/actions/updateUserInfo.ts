@@ -25,8 +25,6 @@ async function updateUserCalculationDetails(request: UpdateUserInfoRequest) {
       throw new Error("Unauthorized");
     }
 
-    console.log("request", request);
-
     const { monthlyIncome, numberOfWorkingDays, useWorkingDaysForCalculation } =
       request;
 
@@ -47,12 +45,11 @@ async function updateUserCalculationDetails(request: UpdateUserInfoRequest) {
 
     // Decrypt monthlyIncome for response
     if (
-      updatedUser[0].monthlyIncome &&
+      updatedUser[0]?.monthlyIncome &&
       isEncrypted(updatedUser[0].monthlyIncome)
     ) {
-      updatedUser[0].monthlyIncome = decryptMonthlyIncome(
-        updatedUser[0].monthlyIncome
-      ).toString();
+      updatedUser[0].monthlyIncome =
+        decryptMonthlyIncome(updatedUser[0].monthlyIncome)?.toString() ?? null;
     }
 
     return formatActionResponse(updatedUser, true, 200);

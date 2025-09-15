@@ -17,26 +17,25 @@ export async function POST(req: NextRequest) {
       .limit(1);
 
     if (existingUser.length > 0) {
-      // Decrypt monthlyIncome if it exists and is encrypted
-      const userData = existingUser[0];
+      // Create a copy to avoid mutating the original object
+      const userData = { ...existingUser[0] };
+
       if (userData.monthlyIncome && isEncrypted(userData.monthlyIncome)) {
-        userData.monthlyIncome = decryptMonthlyIncome(
-          userData.monthlyIncome
-        ).toString();
+        const decryptedIncome = decryptMonthlyIncome(userData.monthlyIncome);
+        userData.monthlyIncome =
+          decryptedIncome !== null ? decryptedIncome.toString() : null;
       }
       return NextResponse.json({ user: userData });
     }
-
-    // Encrypt monthlyIncome if provided
 
     // Create new user
     const [newUser] = await db.insert(user).values(body).returning();
 
     // Decrypt monthlyIncome for response
     if (newUser.monthlyIncome && isEncrypted(newUser.monthlyIncome)) {
-      newUser.monthlyIncome = decryptMonthlyIncome(
-        newUser.monthlyIncome
-      ).toString();
+      const decryptedIncome = decryptMonthlyIncome(newUser.monthlyIncome);
+      newUser.monthlyIncome =
+        decryptedIncome !== null ? decryptedIncome.toString() : null;
     }
 
     return NextResponse.json({ user: newUser });

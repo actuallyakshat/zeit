@@ -1,15 +1,15 @@
 import { SeparatorBorder } from "@/components/ui/seperator";
+import { needsOnboarding } from "@/service/user/server/needs-onboarding";
 import {
   getWishlistItems,
   WishlistItem,
 } from "@/service/wishlist-item/server/get-wishlist-items";
+import { Loader } from "lucide-react";
 import { Suspense } from "react";
 import Header from "../components/header";
 import ItemsWrapper from "../components/items-wrapper";
-import Stats from "../components/stats";
-import { Loader } from "lucide-react";
 import OnboardUser from "../components/onboard-user";
-import { needsOnboarding } from "@/service/user/server/needs-onboarding";
+import Stats from "../components/stats";
 
 export default async function DashboardPage() {
   const wishlistItems: Promise<WishlistItem[] | undefined> = getWishlistItems();
