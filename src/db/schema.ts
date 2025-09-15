@@ -19,7 +19,8 @@ export const user = pgTable("user", {
   clerkId: text("clerk_id").notNull().unique(),
 
   //information related to calculation
-  monthlyIncome: integer("monthly_income"),
+  // monthlyIncome: integer("monthly_income"),
+  monthlyIncome: text("monthly_income"),
   numberOfWorkingDays: integer("number_of_working_days"),
   useWorkingDaysForCalculation: boolean(
     "use_working_days_for_calculation"

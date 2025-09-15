@@ -1,0 +1,1 @@
+ALTER TABLE "user" ALTER COLUMN "monthly_income" SET DATA TYPE text;

@@ -22,6 +22,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "crypto-js": "^4.2.0",
     "dotenv": "^17.2.2",
     "drizzle-orm": "^0.44.5",
     "lucide-react": "^0.544.0",
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "^20",
     "@types/pg": "^8.15.5",
     "@types/react": "^19",

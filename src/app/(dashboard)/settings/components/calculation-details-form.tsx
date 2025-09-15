@@ -29,7 +29,7 @@ export default function CalculationDetailsForm() {
   useEffect(() => {
     if (user) {
       setDetails({
-        monthlyIncome: user.monthlyIncome ?? 0,
+        monthlyIncome: Number(user.monthlyIncome) ?? 0,
         numberOfWorkingDays: user.numberOfWorkingDays ?? 0,
         useWorkingDaysForCalculation: user.useWorkingDaysForCalculation ?? true,
       });
