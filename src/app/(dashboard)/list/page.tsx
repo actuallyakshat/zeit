@@ -1,5 +1,4 @@
 import { SeparatorBorder } from "@/components/ui/seperator";
-import { needsOnboarding } from "@/service/user/server/needs-onboarding";
 import {
   getWishlistItems,
   WishlistItem,
@@ -8,36 +7,33 @@ import { Loader } from "lucide-react";
 import { Suspense } from "react";
 import Header from "../components/header";
 import ItemsWrapper from "../components/items-wrapper";
-import OnboardUser from "../components/onboard-user";
 import Stats from "../components/stats";
+import { EnsureOnboarding } from "@/service/user/server/ensure-onboarding";
 
 export default async function DashboardPage() {
   const wishlistItems: Promise<WishlistItem[] | undefined> = getWishlistItems();
-  const userNeedsOnboarding = await needsOnboarding();
-
-  if (userNeedsOnboarding) {
-    return <OnboardUser />;
-  }
 
   return (
     <div className="h-full w-full flex flex-col flex-1">
-      <Suspense fallback={null}>
-        <Header />
-      </Suspense>
-      <Suspense fallback={null}>
-        <Stats dataPromise={wishlistItems} />
-      </Suspense>
-      <SeparatorBorder className="h-12" />
-      <Suspense fallback={<LoadingItems />}>
-        <ItemsWrapper dataPromise={wishlistItems} />
-      </Suspense>
+      <EnsureOnboarding>
+        <Suspense fallback={null}>
+          <Header />
+        </Suspense>
+        <Suspense fallback={null}>
+          <Stats dataPromise={wishlistItems} />
+        </Suspense>
+        <SeparatorBorder className="h-12" />
+        <Suspense fallback={<LoadingItems />}>
+          <ItemsWrapper dataPromise={wishlistItems} />
+        </Suspense>
+      </EnsureOnboarding>
     </div>
   );
 }
 
 function LoadingItems() {
   return (
-    <div>
+    <div className="flex-1 border border-dashed">
       <h2 className="flex items-center gap-4 text-2xl tracking-tight p-8">
         Fetching your wishlist <Loader className="animate-spin size-7" />
       </h2>

@@ -7,11 +7,15 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/context/AuthProvider";
 import { updateUserCalculationDetails } from "@/service/actions/updateUserInfo";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function CalculationDetailsForm() {
   const { user, refetchUser } = useAuth();
+
+  const pathname = usePathname();
+  const isOnboardingForm = pathname.includes("/list");
 
   const [details, setDetails] = useState<{
     monthlyIncome: number;
@@ -25,11 +29,10 @@ export default function CalculationDetailsForm() {
   const [isChanged, setIsChanged] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // sync when user arrives — use nullish coalescing so `false` doesn't become `true`
   useEffect(() => {
     if (user) {
       setDetails({
-        monthlyIncome: Number(user.monthlyIncome) ?? 0,
+        monthlyIncome: Number(user.monthlyIncome) || 0,
         numberOfWorkingDays: user.numberOfWorkingDays ?? 0,
         useWorkingDaysForCalculation: user.useWorkingDaysForCalculation ?? true,
       });
@@ -70,7 +73,11 @@ export default function CalculationDetailsForm() {
 
   if (!user) {
     return (
-      <div className="mt-7 w-full flex flex-col gap-3">
+      <div
+        className={`${
+          isOnboardingForm ? "p-8 border-dashed border-x flex-1" : "mt-7"
+        } w-full flex flex-col gap-3`}
+      >
         <div>
           <Skeleton className="h-6 w-40 mb-2" />
           <Skeleton className="h-4 w-64" />
