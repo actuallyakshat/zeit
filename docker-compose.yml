@@ -7,9 +7,14 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: zeit
     ports:
-      - 5111:5432
+      - "5112:5432"   # <host_port>:<container_port>
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - zeit-network
 
 volumes:
   postgres_data:
+
+networks:
+  zeit-network:

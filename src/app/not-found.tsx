@@ -5,7 +5,7 @@ import React from "react";
 
 export default function NotFoundPage() {
   return (
-    <div className="h-screen border-x border-dashed mx-auto max-w-screen-xl flex flex-col items-center justify-between">
+    <div className="h-screen border-x border-dashed mx-auto max-w-screen-lg flex flex-col items-center justify-between">
       <SeparatorBorder className="h-[30%]" />
       <div className="flex items-center justify-center flex-col px-4">
         <h1 className="text-5xl text-center tracking-tight text-balance">

@@ -9,7 +9,7 @@ import PronunciationButton from "@/components/ui/pronunciation-button";
 
 export default function Home() {
   return (
-    <div className="max-w-screen-xl w-full h-screen flex flex-col mx-auto">
+    <div className="max-w-screen-lg px-5 w-full h-screen flex flex-col mx-auto">
       <CTASection />
       <SeparatorBorder className="h-7" />
       <Features />
@@ -67,7 +67,7 @@ function FeatureCard({
 function CTASection() {
   return (
     <div className="flex-[4] p-12 border-x border-dashed">
-      <h1 className="text-8xl mt-4 tracking-tight text-balance">
+      <h1 className="2xl:text-8xl xl:text-7xl md:text-6xl sm:text-4xl text-3xl mt-4 tracking-tight text-balance">
         Your Wishlist, <br />
         Measured in Time.
       </h1>
