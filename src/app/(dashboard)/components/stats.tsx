@@ -1,22 +1,22 @@
-"use client";
-import { WishlistItem } from "@/service/wishlist-item/server/get-wishlist-items";
-import React, { use } from "react";
+"use client"; // Explicitly mark as a Client Component
+
+import { WishlistItem } from "@/service/wishlist-item/wishlist-item"; // Import client-side WishlistItem type
+import React from "react";
 import { useAuth } from "@/context/AuthProvider";
 import { getTimeToAffordRouter } from "@/lib/price-to-time-calculation";
 
 export default function Stats({
-  dataPromise,
+  data, // Now expects resolved data directly
 }: {
-  dataPromise: Promise<WishlistItem[] | undefined>;
+  data: WishlistItem[]; // Changed from Promise to resolved array
 }) {
-  const initialItems = use(dataPromise);
+  // `use(dataPromise)` is removed as data is already resolved
   const { user } = useAuth();
 
   const itemsInWishlist =
-    initialItems?.filter((item) => item.purchased === false) || [];
+    data?.filter((item) => item.purchased === false) || [];
 
-  const itemsBought =
-    initialItems?.filter((item) => item.purchased === true) || [];
+  const itemsBought = data?.filter((item) => item.purchased === true) || [];
 
   const totalSpent = itemsBought
     .map((item) => item.price || 0)
@@ -35,7 +35,7 @@ export default function Stats({
     ? getTimeToAffordRouter(
         totalSpent,
         Number(user.monthlyIncome),
-        user.numberOfWorkingDays || undefined
+        user.numberOfWorkingDays || undefined,
       )
     : "Set your income in settings";
 
@@ -43,7 +43,7 @@ export default function Stats({
     ? getTimeToAffordRouter(
         timeRemaining,
         Number(user.monthlyIncome),
-        user.numberOfWorkingDays || undefined
+        user.numberOfWorkingDays || undefined,
       )
     : "Set your income in settings";
 
@@ -51,7 +51,7 @@ export default function Stats({
   const itemsBoughtCount = itemsBought.length;
 
   return (
-    <div className="grid grid-cols-4 border border-dashed">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border border-dashed rounded-lg text-center divide-x">
       <TimeSpentCard timeSpent={timeSpentString} />
       <TimeRequiredCard timeRequired={timeRequiredString} />
       <ItemsInWishlistCard count={itemsInWishlistCount} />

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -13,12 +13,12 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import {
-  createWishlistItem,
-  updateWishlistItem,
-} from "@/service/wishlist-item/wishlist-item";
+  useCreateWishlistItem, // Import the Tanstack Query mutation hook
+  useUpdateWishlistItem, // Import the Tanstack Query mutation hook
+  WishlistItem, // Make sure WishlistItem type is imported or defined
+} from "@/service/wishlist-item/wishlist-item"; // Adjust the path to your service file
+import React, { useEffect, useState } from "react";
 import { ItemCard } from "./items-list";
-import { WishlistItem } from "@/service/wishlist-item/server/get-wishlist-items";
-import { Checkbox } from "@/components/ui/checkbox";
 
 export default function AddItemDialog({
   isEdit,
@@ -35,20 +35,35 @@ export default function AddItemDialog({
   const [url, setUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [price, setPrice] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [purchased, setPurchased] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Initialize the mutation hooks
+  const createWishlistItemMutation = useCreateWishlistItem();
+  const updateWishlistItemMutation = useUpdateWishlistItem();
+
+  const isLoading =
+    createWishlistItemMutation.isPending ||
+    updateWishlistItemMutation.isPending;
+
   useEffect(() => {
-    if (isEdit) {
-      setTitle(item?.title || "");
-      setDescription(item?.description || "");
-      setUrl(item?.url || "");
-      setImageUrl(item?.imageUrl || "");
-      setPrice(item?.price?.toString() || "");
-      setPurchased(item?.purchased || false);
+    if (isEdit && item) {
+      setTitle(item.title || "");
+      setDescription(item.description || "");
+      setUrl(item.url || "");
+      setImageUrl(item.imageUrl || "");
+      setPrice(item.price?.toString() || "");
+      setPurchased(item.purchased || false);
+    } else {
+      // Reset form fields when opening for "add"
+      setTitle("");
+      setDescription("");
+      setUrl("");
+      setImageUrl("");
+      setPrice("");
+      setPurchased(false);
     }
-  }, [isEdit, item]);
+  }, [isEdit, item, isOpen]); // Added isOpen to reset when dialog opens for add
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -67,6 +82,16 @@ export default function AddItemDialog({
     return Object.keys(newErrors).length === 0;
   };
 
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setUrl("");
+    setImageUrl("");
+    setPrice("");
+    setPurchased(false);
+    setErrors({});
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -74,10 +99,8 @@ export default function AddItemDialog({
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      await createWishlistItem({
+      await createWishlistItemMutation.mutateAsync({
         title,
         description: description || undefined,
         url: url || undefined,
@@ -86,21 +109,12 @@ export default function AddItemDialog({
         purchased: purchased,
       });
 
-      // Reset form
-      setTitle("");
-      setDescription("");
-      setUrl("");
-      setImageUrl("");
-      setPrice("");
-      setErrors({});
-
-      // Close dialog
+      resetForm();
       setIsOpen(false);
     } catch (error) {
       console.error("Error creating wishlist item:", error);
-      // In a real app, you might want to show a toast or error message to the user
-    } finally {
-      setIsLoading(false);
+      // You can use a toast library here to show a user-friendly error message
+      // E.g., toast.error("Failed to create item. Please try again.");
     }
   };
 
@@ -110,11 +124,15 @@ export default function AddItemDialog({
       return;
     }
 
-    setIsLoading(true);
+    if (!item?.id) {
+      console.error("No item ID provided for update.");
+      // Potentially show an error to the user
+      return;
+    }
 
     try {
-      await updateWishlistItem({
-        id: item?.id || "",
+      await updateWishlistItemMutation.mutateAsync({
+        id: item.id,
         title,
         description: description || undefined,
         url: url || undefined,
@@ -123,29 +141,22 @@ export default function AddItemDialog({
         purchased,
       });
 
-      // Reset form
-      setTitle("");
-      setDescription("");
-      setUrl("");
-      setImageUrl("");
-      setPrice("");
-      setErrors({});
-      setPurchased(false);
-
-      // Close dialog
+      resetForm();
       setIsOpen(false);
     } catch (error) {
       console.error("Error updating wishlist item:", error);
-      // In a real app, you might want to show a toast or error message to the user
-    } finally {
-      setIsLoading(false);
+      // E.g., toast.error("Failed to update item. Please try again.");
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        {customTrigger || <Button variant="default">Add New Item</Button>}
+        {customTrigger || (
+          <Button variant="default">
+            {isEdit ? "Edit Item" : "Add New Item"}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-5xl overflow-y-auto flex gap-6">
         <div className="flex-[3]">
@@ -154,10 +165,11 @@ export default function AddItemDialog({
             className="w-full"
           >
             <DialogHeader>
-              <DialogTitle>Add New Item</DialogTitle>
+              <DialogTitle>{isEdit ? "Edit Item" : "Add New Item"}</DialogTitle>
               <DialogDescription>
-                Add a new item to your wishlist. Click save when you&apos;re
-                done.
+                {isEdit
+                  ? "Edit the details of your wishlist item."
+                  : "Add a new item to your wishlist. Click save when you're done."}
               </DialogDescription>
             </DialogHeader>
             <div className="gap-4 py-4 flex flex-1  h-full flex-col justify-center">
@@ -227,6 +239,7 @@ export default function AddItemDialog({
                 <div className="col-span-3">
                   <input
                     id="price"
+                    type="number" // Changed to type="number" for better input handling
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
@@ -236,7 +249,11 @@ export default function AddItemDialog({
                     <p className="text-sm text-red-500 mt-1">{errors.price}</p>
                   )}
                 </div>
-                <Label htmlFor="price" className="text-right">
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                {" "}
+                {/* Wrapped in a new grid div */}
+                <Label htmlFor="purchased" className="text-right">
                   Purchased?
                 </Label>
                 <div className="col-span-3">
@@ -248,15 +265,16 @@ export default function AddItemDialog({
                       setPurchased(checked as boolean)
                     }
                   />
-                  {errors.price && (
-                    <p className="text-sm text-red-500 mt-1">{errors.price}</p>
-                  )}
                 </div>
               </div>
             </div>
             <DialogFooter>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Saving..." : "Save Item"}
+                {isLoading
+                  ? "Saving..."
+                  : isEdit
+                    ? "Save Changes"
+                    : "Add Item"}
               </Button>
             </DialogFooter>
           </form>
@@ -265,21 +283,21 @@ export default function AddItemDialog({
           <h2>Preview</h2>
           <div className="w-full">
             <ItemCard
-              index={0}
-              item={{
-                title: title || "Item Title",
-                description:
-                  description || "Item description will appear here.",
-                url: url || "",
-                imageUrl: imageUrl || "",
-                price: price ? Number(price) : 0,
-                purchased: false,
-                id: "preview-id",
-                userId: "preview-user",
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              }}
-            />
+                index={0}
+                item={{
+                  title: title || "Item Title",
+                  description:
+                    description || "Item description will appear here.",
+                  url: url || "",
+                  imageUrl: imageUrl || "",
+                  price: price ? Number(price) : 0,
+                  purchased: purchased, // Use the state variable here
+                  id: item?.id || "preview-id", // Use actual item ID for edit preview
+                  userId: item?.userId || "preview-user",
+                  createdAt: item?.createdAt || new Date().toISOString(),
+                  updatedAt: item?.updatedAt || new Date().toISOString(),
+                }}
+              />
           </div>
         </div>
       </DialogContent>
