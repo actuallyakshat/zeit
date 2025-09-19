@@ -52,7 +52,7 @@ export default function DashboardPage() {
         </Suspense>
         <Stats data={items} />
         <SeparatorBorder className="h-12" />
-        <ItemsWrapper data={items} />
+        <ItemsWrapper />
       </EnsureOnboarding>
     </div>
   );
@@ -70,11 +70,11 @@ function LoadingItems() {
 
 function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-8 border border-dashed rounded-lg min-h-[150px] animate-pulse">
-      <div className="h-full w-full bg-gray-200 rounded-md"></div>
-      <div className="h-full w-full bg-gray-200 rounded-md"></div>
-      <div className="h-full w-full bg-gray-200 rounded-md"></div>
-      <div className="h-full w-full bg-gray-200 rounded-md"></div>
+    <div className="grid grid-cols-1 h-20 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 border border-dashed rounded-lg min-h-[150px] animate-pulse">
+      <div className="h-full w-full bg-accent"></div>
+      <div className="h-full w-full bg-accent"></div>
+      <div className="h-full w-full bg-accent"></div>
+      <div className="h-full w-full bg-accent"></div>
     </div>
   );
 }

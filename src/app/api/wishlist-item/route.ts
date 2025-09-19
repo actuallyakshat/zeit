@@ -2,7 +2,7 @@ import { db } from "@/db/drizzle";
 import { user, wishlistItem } from "@/db/schema";
 import { CreateWishlistItemRequest, WishlistItem } from "@/service/wishlist-item/wishlist-item";
 import { auth } from "@clerk/nextjs/server";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -55,6 +55,7 @@ export async function POST(req: NextRequest) {
 
 /**
  * Handles GET requests to /api/wishlist-item to fetch all wishlist items for the authenticated user.
+ * Supports pagination and filtering by purchased status.
  * @param req The incoming NextRequest.
  * @returns A NextResponse containing an array of wishlist items or an error.
  */
@@ -76,11 +77,33 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Fetch all wishlist items for the current user
+    // Parse query parameters
+    const { searchParams } = new URL(req.url);
+    const purchasedParam = searchParams.get("purchased");
+    const pageParam = searchParams.get("page");
+    const limitParam = searchParams.get("limit");
+
+    // Set defaults
+    const page = pageParam ? parseInt(pageParam, 10) : 1;
+    const limit = limitParam ? parseInt(limitParam, 10) : 12;
+    const offset = (page - 1) * limit;
+
+    // Build where conditions
+    const conditions = [eq(wishlistItem.userId, dbUser.id)];
+
+    // Add purchased filter if specified
+    if (purchasedParam !== null) {
+      const purchasedValue = purchasedParam === "true";
+      conditions.push(eq(wishlistItem.purchased, purchasedValue));
+    }
+
+    // Build and execute query with filtering and pagination
     const items: WishlistItem[] = await db
       .select()
       .from(wishlistItem)
-      .where(eq(wishlistItem.userId, dbUser.id));
+      .where(and(...conditions))
+      .limit(limit)
+      .offset(offset);
 
     return NextResponse.json({ items });
   } catch (error) {
