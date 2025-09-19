@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
 import CTAButton from "@/components/ui/cta-button";
+import PronunciationButton from "@/components/ui/pronunciation-button";
 import { SeparatorBorder } from "@/components/ui/seperator";
-import { WishlistItem } from "@/service/wishlist-item/server/get-wishlist-items";
 import { GithubIcon } from "lucide-react";
 import Link from "next/link";
 import { ItemCard } from "./(dashboard)/components/items-list";
-import PronunciationButton from "@/components/ui/pronunciation-button";
+import { WishlistItem } from "@/service/wishlist-item/wishlist-item";
 
 export default function Home() {
   return (
-    <div className="max-w-screen-xl w-full h-screen flex flex-col mx-auto">
+    <div className="max-w-screen-lg px-5 w-full h-screen flex flex-col mx-auto">
       <CTASection />
       <SeparatorBorder className="h-7" />
       <Features />
@@ -67,7 +67,7 @@ function FeatureCard({
 function CTASection() {
   return (
     <div className="flex-[4] p-12 border-x border-dashed">
-      <h1 className="text-8xl mt-4 tracking-tight text-balance">
+      <h1 className="2xl:text-8xl xl:text-7xl md:text-6xl sm:text-4xl text-3xl mt-4 tracking-tight text-balance">
         Your Wishlist, <br />
         Measured in Time.
       </h1>
@@ -106,8 +106,8 @@ const items: WishlistItem[] = [
     imageUrl:
       "https://www.apple.com/v/iphone/home/ce/images/overview/select/iphone_air__f0t56fef3oey_large_2x.jpg",
     price: 119900,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     purchased: false,
     id: "preview-id",
     userId: "preview-user",
@@ -119,8 +119,8 @@ const items: WishlistItem[] = [
     imageUrl:
       "https://bottega-veneta.dam.kering.com/m/25836dbf1df8bdfb/Large-836083V5QB08354_A.jpg?v=1",
     price: 556122.96,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     purchased: false,
     id: "preview-id",
     userId: "preview-user",
@@ -132,8 +132,8 @@ const items: WishlistItem[] = [
     imageUrl:
       "https://images.squarespace-cdn.com/content/v1/6397e1ebbb148c2e8ac0b037/28bd2e1a-71d4-4dbf-b8a9-b34bdee409a8/London_1_2019-4508.jpg",
     price: 230000,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     purchased: false,
     id: "preview-id",
     userId: "preview-user",

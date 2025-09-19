@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Popover,
@@ -13,12 +13,12 @@ import {
 } from "@/components/ui/tooltip";
 import { useAuth } from "@/context/AuthProvider";
 import { getTimeToAffordRouter } from "@/lib/price-to-time-calculation";
-import { WishlistItem } from "@/service/wishlist-item/server/get-wishlist-items";
 import { ArrowRight, Ellipsis } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import AddItemDialog from "./add-item-dialog";
 import ConfirmDeleteDialog from "./confirm-delete-dialog";
+import { WishlistItem } from "@/service/wishlist-item/wishlist-item";
 
 export type ItemsListProps = {
   readonly purchased: boolean;

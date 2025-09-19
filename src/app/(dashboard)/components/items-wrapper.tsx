@@ -1,28 +1,28 @@
-"use client";
-
 import useToggleListType from "@/hooks/useToggleListType";
 import ItemsList from "./items-list";
-import { WishlistItem } from "@/service/wishlist-item/server/get-wishlist-items";
-import { use } from "react";
+import { WishlistItem } from "@/service/wishlist-item/wishlist-item";
+import React from "react";
 
 export default function ItemsWrapper({
-  dataPromise,
+  data,
 }: {
-  dataPromise: Promise<WishlistItem[] | undefined>;
+  data: WishlistItem[];
 }) {
   const { purchased } = useToggleListType();
-  const initialItems = use(dataPromise);
 
-  if (!initialItems)
+  const itemsData = data.filter((item) =>
+    purchased === true ? item.purchased : !item.purchased,
+  );
+
+  if (itemsData.length === 0) {
     return (
       <p className="p-8 text-xl text-muted-foreground">
-        Looks like something went wrong. Try again.
+        {purchased
+          ? "You haven't purchased any items yet."
+          : "Your wishlist is empty. Add some items!"}
       </p>
     );
-
-  const itemsData = initialItems.filter((item) =>
-    purchased === true ? item.purchased : !item.purchased
-  );
+  }
 
   return <ItemsList purchased={purchased ?? false} items={itemsData} />;
 }

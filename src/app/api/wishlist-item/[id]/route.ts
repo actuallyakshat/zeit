@@ -49,9 +49,6 @@ export async function PUT(
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
-    revalidatePath("/(dashboard)/list");
-    revalidatePath("/list");
-
     return NextResponse.json({ item: updatedItem });
   } catch (error) {
     console.error("Error updating wishlist item:", error);

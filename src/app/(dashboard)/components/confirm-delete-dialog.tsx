@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { deleteWishlistItem } from "@/service/wishlist-item/wishlist-item";
+import { useDeleteWishlistItem } from "@/service/wishlist-item/wishlist-item"; // Correct import path
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -28,19 +28,23 @@ export default function ConfirmDeleteDialog({
   itemId: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+
+  // Initialize the mutation hook
+  const { mutateAsync: deleteItem, isPending: isDeleting } =
+    useDeleteWishlistItem();
+
   async function handleDeleteItem() {
     try {
-      setLoading(true);
-      await deleteWishlistItem(itemId);
-      toast.success("Item deleted successfully");
+      // Use the mutateAsync function from the hook
+      await deleteItem(itemId);
+      toast.success("Item deleted successfully!"); // Correct success message
       setIsOpen(false);
     } catch (error) {
       console.error("Error deleting wishlist item:", error);
-      toast.error("Item deleted successfully");
-    } finally {
-      setLoading(false);
+      // Ensure the error message is correct, not a success message
+      toast.error("Failed to delete item. Please try again.");
     }
+    // No `finally` block needed for setting `loading` because `isDeleting` handles it.
   }
 
   return (
@@ -59,11 +63,11 @@ export default function ConfirmDeleteDialog({
             Cancel
           </Button>
           <Button
-            disabled={loading}
+            disabled={isDeleting} // Use the `isDeleting` state from the hook
             variant="destructive"
             onClick={handleDeleteItem}
           >
-            {loading ? "Deleting..." : "Delete"}
+            {isDeleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>
       </DialogContent>

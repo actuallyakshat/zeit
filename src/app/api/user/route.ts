@@ -29,7 +29,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Create new user
-    const [newUser] = await db.insert(user).values(body).returning();
+    const [newUser] = await db.insert(user).values({
+      name: body.name,
+      email: body.email,
+      username: body.username,
+      clerkId: body.clerkId,
+    }).returning();
 
     // Decrypt monthlyIncome for response
     if (newUser.monthlyIncome && isEncrypted(newUser.monthlyIncome)) {

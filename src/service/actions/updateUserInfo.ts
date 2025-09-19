@@ -10,12 +10,15 @@ import {
   encryptMonthlyIncome,
   isEncrypted,
 } from "@/lib/encryption";
+import { InferSelectModel } from "drizzle-orm";
 
 interface UpdateUserInfoRequest {
   monthlyIncome: number;
   numberOfWorkingDays: number;
   useWorkingDaysForCalculation: boolean;
 }
+
+type DbUser = InferSelectModel<typeof user>;
 
 async function updateUserCalculationDetails(request: UpdateUserInfoRequest) {
   try {
@@ -52,7 +55,7 @@ async function updateUserCalculationDetails(request: UpdateUserInfoRequest) {
         decryptMonthlyIncome(updatedUser[0].monthlyIncome)?.toString() ?? null;
     }
 
-    return formatActionResponse(updatedUser, true, 200);
+    return formatActionResponse(updatedUser as unknown as DbUser[], true, 200);
   } catch (error) {
     console.error("Error updating user calculation details:", error);
     throw error;

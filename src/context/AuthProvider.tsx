@@ -3,41 +3,47 @@
 import { useClerk, useUser } from "@clerk/nextjs";
 import React, { useEffect, useMemo } from "react";
 import { AuthContextInterface } from "@/types/auth";
-import { upsertUser } from "@/service/user/user";
+import { useUpsertUser } from "@/service/user/user";
+import { toast } from "sonner";
 
 const authContext = React.createContext<AuthContextInterface | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = React.useState<AuthContextInterface["user"]>(null);
-  const { user: clerkUser, isSignedIn } = useUser();
+  const { user: clerkUser, isSignedIn, isLoaded: isClerkLoaded } = useUser();
   const { signOut } = useClerk();
+
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
 
-  // Upsert user to database when they sign in
+  const {
+    mutateAsync: upsertDbUser,
+    isPending: isUpsertingUser,
+    isSuccess: isUpsertSuccess,
+    isError: isUpsertError,
+    error: upsertError,
+    data: upsertedUser,
+  } = useUpsertUser();
+
   useEffect(() => {
-    const handleUserUpsert = async () => {
-      if (!clerkUser) return;
-
-      try {
-        setIsLoading(true);
-        const dbUser = await upsertUser(clerkUser);
-        setUser(dbUser);
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error("Error upserting user:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (isSignedIn && clerkUser) {
-      handleUserUpsert();
-    } else {
+    if (isClerkLoaded && isSignedIn && clerkUser) {
+      upsertDbUser(clerkUser);
+    } else if (isClerkLoaded && !isSignedIn) {
       setUser(null);
       setIsAuthenticated(false);
     }
-  }, [clerkUser, isSignedIn]);
+  }, [isClerkLoaded, isSignedIn, clerkUser, upsertDbUser]);
+
+  useEffect(() => {
+    if (isUpsertSuccess && upsertedUser) {
+      setUser(upsertedUser);
+      setIsAuthenticated(true);
+    } else if (isUpsertError) {
+      console.error("Error upserting user in AuthProvider:", upsertError);
+      toast.error("Failed to sync user profile. Some features may be limited.");
+      setUser(null);
+      setIsAuthenticated(false);
+    }
+  }, [isUpsertSuccess, upsertedUser, isUpsertError, upsertError]);
 
   const handleSignOut = async () => {
     setUser(null);
@@ -46,10 +52,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const refetchUser = async () => {
-    if (!clerkUser) return;
-    const dbUser = await upsertUser(clerkUser);
-    setUser(dbUser);
+    if (!clerkUser) {
+      console.warn("Cannot refetch user: Clerk user not available.");
+      return;
+    }
+    try {
+      await upsertDbUser(clerkUser);
+      toast.success("User profile refreshed!");
+    } catch (err) {
+      console.error("Error refetching user:", err);
+      toast.error("Failed to refresh user profile.");
+    }
   };
+
+  const overallLoading = !isClerkLoaded || isUpsertingUser;
 
   const value = useMemo(
     () => ({
@@ -58,9 +74,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isAuthenticated,
       signOut: handleSignOut,
       refetchUser,
-      isLoading,
+      isLoading: overallLoading,
     }),
-    [user, clerkUser, isAuthenticated, handleSignOut]
+    [user, clerkUser, isAuthenticated, handleSignOut, refetchUser, overallLoading],
   );
 
   return <authContext.Provider value={value}>{children}</authContext.Provider>;

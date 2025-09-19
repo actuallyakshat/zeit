@@ -1,31 +1,58 @@
+"use client"; // This directive marks it as a Client Component
+
 import { SeparatorBorder } from "@/components/ui/seperator";
-import {
-  getWishlistItems,
-  WishlistItem,
-} from "@/service/wishlist-item/server/get-wishlist-items";
+import { EnsureOnboarding } from "@/service/user/ensure-onboarding";
+import { useWishlistItems } from "@/service/wishlist-item/wishlist-item"; // Import the client-side hook
 import { Loader } from "lucide-react";
 import { Suspense } from "react";
 import Header from "../components/header";
 import ItemsWrapper from "../components/items-wrapper";
 import Stats from "../components/stats";
-import { EnsureOnboarding } from "@/service/user/server/ensure-onboarding";
 
-export default async function DashboardPage() {
-  const wishlistItems: Promise<WishlistItem[] | undefined> = getWishlistItems();
+export default function DashboardPage() {
+  const {
+    data: wishlistItems,
+    isLoading,
+    isError,
+    error,
+  } = useWishlistItems();
+
+  if (isLoading) {
+    return (
+      <div className="h-full w-full flex flex-col flex-1">
+        <Suspense fallback={<div className="p-8">Loading...</div>}>
+          <Header /> 
+        </Suspense>
+        <StatsSkeleton />
+        <SeparatorBorder className="h-12" />
+        <LoadingItems />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="h-full w-full flex flex-col flex-1 p-8 text-red-600">
+        <Suspense fallback={<div className="p-8">Loading...</div>}>
+          <Header />
+        </Suspense>
+        <h2>Error loading wishlist:</h2>
+        <p>{error?.message || "An unknown error occurred."}</p>
+      </div>
+    );
+  }
+
+  const items = wishlistItems || [];
 
   return (
     <div className="h-full w-full flex flex-col flex-1">
       <EnsureOnboarding>
-        <Suspense fallback={null}>
+        <Suspense fallback={<div className="p-8">Loading...</div>}>
           <Header />
         </Suspense>
-        <Suspense fallback={null}>
-          <Stats dataPromise={wishlistItems} />
-        </Suspense>
+        <Stats data={items} />
         <SeparatorBorder className="h-12" />
-        <Suspense fallback={<LoadingItems />}>
-          <ItemsWrapper dataPromise={wishlistItems} />
-        </Suspense>
+        <ItemsWrapper data={items} />
       </EnsureOnboarding>
     </div>
   );
@@ -33,7 +60,7 @@ export default async function DashboardPage() {
 
 function LoadingItems() {
   return (
-    <div className="flex-1 border border-dashed">
+    <div className="flex-1 border border-dashed flex items-center justify-center">
       <h2 className="flex items-center gap-4 text-2xl tracking-tight p-8">
         Fetching your wishlist <Loader className="animate-spin size-7" />
       </h2>
@@ -42,5 +69,12 @@ function LoadingItems() {
 }
 
 function StatsSkeleton() {
-  return <div className="grid grid-cols-4 border border-dashed"></div>;
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-8 border border-dashed rounded-lg min-h-[150px] animate-pulse">
+      <div className="h-full w-full bg-gray-200 rounded-md"></div>
+      <div className="h-full w-full bg-gray-200 rounded-md"></div>
+      <div className="h-full w-full bg-gray-200 rounded-md"></div>
+      <div className="h-full w-full bg-gray-200 rounded-md"></div>
+    </div>
+  );
 }
