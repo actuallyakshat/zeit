@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type CreateWishlistItemRequest = {
   title: string;
@@ -135,20 +135,6 @@ export function useDeleteWishlistItem() {
   });
 }
 
-// Example of how you might fetch all wishlist items (e.g., for a list page)
-// This would typically go into a separate `queries.ts` file or similar.
-import { useQuery } from "@tanstack/react-query";
-
-async function getWishlistItems(): Promise<WishlistItem[]> {
-  const response = await fetch("/api/wishlist-item");
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to fetch wishlist items");
-  }
-  const data = await response.json();
-  return data.items;
-}
-
 // Example of how you might fetch a single wishlist item
 async function getWishlistItemById(id: string): Promise<WishlistItem> {
   const response = await fetch(`/api/wishlist-item/${id}`);
@@ -181,9 +167,54 @@ export type WishlistItem = {
   updatedAt: Date | string;
 };
 
+export type PaginatedWishlistItems = {
+  items: WishlistItem[];
+  page: number;
+  limit: number;
+  total: number;
+};
+
 // Client-side function to fetch wishlist items via an API endpoint
 async function getWishlistItemsClient(): Promise<WishlistItem[]> {
   const response = await fetch("/api/wishlist-item"); // Assuming you have an API route for this
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to fetch wishlist items");
+  }
+  const data = await response.json();
+  return data.items;
+}
+
+/**
+ * Client-side function to fetch paginated wishlist items
+ * @param params Pagination, filter, and sort parameters
+ * @returns Paginated wishlist items
+ */
+async function getPaginatedWishlistItemsClient(params: {
+  purchased?: boolean;
+  page: number;
+  limit: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}): Promise<WishlistItem[]> {
+  const { purchased, page, limit, sortBy, sortOrder } = params;
+  const searchParams = new URLSearchParams();
+
+  if (purchased !== undefined) {
+    searchParams.append("purchased", purchased.toString());
+  }
+  searchParams.append("page", page.toString());
+  searchParams.append("limit", limit.toString());
+  
+  if (sortBy) {
+    searchParams.append("sortBy", sortBy);
+  }
+  
+  if (sortOrder) {
+    searchParams.append("sortOrder", sortOrder);
+  }
+
+  const response = await fetch(`/api/wishlist-item?${searchParams.toString()}`);
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || "Failed to fetch wishlist items");
@@ -202,5 +233,23 @@ export function useWishlistItems() {
   return useQuery<WishlistItem[], Error>({
     queryKey: ["wishlistItems"],
     queryFn: getWishlistItemsClient, // Use the client-side fetcher
+  });
+}
+
+/**
+ * Tanstack Query hook to fetch paginated wishlist items
+ * @param params Pagination, filter, and sort parameters
+ * @returns Paginated wishlist items query
+ */
+export function usePaginatedWishlistItems(params: {
+  purchased?: boolean;
+  page: number;
+  limit: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}) {
+  return useQuery<WishlistItem[], Error>({
+    queryKey: ["wishlistItems", params],
+    queryFn: () => getPaginatedWishlistItemsClient(params),
   });
 }

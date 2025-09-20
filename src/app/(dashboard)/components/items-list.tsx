@@ -26,17 +26,10 @@ export type ItemsListProps = {
 };
 
 export default function ItemsList({ purchased, items }: ItemsListProps) {
-  // Filter items based on purchased status
-  const filteredItems = items.filter((item) => item.purchased === purchased);
-
-  const { isLoading } = useAuth();
-
-  if (isLoading) return null;
-
   return (
-    <div className="border-x border-dashed flex-1">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-8">
-        {filteredItems.map((item, index) => (
+    <div className="flex-1">
+      <div className="items-grid mb-8">
+        {items.map((item, index) => (
           <ItemCard key={item.id} index={index} item={item} />
         ))}
       </div>

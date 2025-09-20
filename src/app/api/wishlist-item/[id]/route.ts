@@ -1,9 +1,9 @@
 import { db } from "@/db/drizzle";
 import { user, wishlistItem } from "@/db/schema";
+import { formatActionResponse } from "@/lib/formatActionResponse";
+import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
-import { revalidatePath } from "next/cache";
 
 export async function PUT(
   req: NextRequest,
@@ -49,12 +49,13 @@ export async function PUT(
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ item: updatedItem });
+    const formattedResponse = formatActionResponse({ item: updatedItem }, true, 200)
+    return NextResponse.json(formattedResponse);
   } catch (error) {
     console.error("Error updating wishlist item:", error);
+    const errorResponse = await formatActionResponse({ error }, false, 500)
     return NextResponse.json(
-      { error: "Failed to update wishlist item" },
-      { status: 500 }
+      errorResponse
     );
   }
 }
@@ -91,15 +92,13 @@ export async function DELETE(
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
-    revalidatePath("/(dashboard)/list");
-    revalidatePath("/list");
-
-    return NextResponse.json({ success: true });
+    const formattedResponse = formatActionResponse({ message: "Success" }, true, 204)
+    return NextResponse.json(formattedResponse);
   } catch (error) {
     console.error("Error deleting wishlist item:", error);
+    const errorResponse = formatActionResponse({ error }, false, 500)
     return NextResponse.json(
-      { error: "Failed to delete wishlist item" },
-      { status: 500 }
+      errorResponse
     );
   }
 }

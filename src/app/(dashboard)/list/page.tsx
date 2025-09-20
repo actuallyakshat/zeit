@@ -1,6 +1,7 @@
 "use client"; // This directive marks it as a Client Component
 
 import { SeparatorBorder } from "@/components/ui/seperator";
+import { SemanticSearchProvider } from "@/context/SemanticSearchContext";
 import { EnsureOnboarding } from "@/service/user/ensure-onboarding";
 import { useWishlistItems } from "@/service/wishlist-item/wishlist-item"; // Import the client-side hook
 import { Loader } from "lucide-react";
@@ -9,7 +10,7 @@ import Header from "../components/header";
 import ItemsWrapper from "../components/items-wrapper";
 import Stats from "../components/stats";
 
-export default function DashboardPage() {
+function DashboardContent() {
   const {
     data: wishlistItems,
     isLoading,
@@ -21,7 +22,7 @@ export default function DashboardPage() {
     return (
       <div className="h-full w-full flex flex-col flex-1">
         <Suspense fallback={<div className="p-8">Loading...</div>}>
-          <Header /> 
+          <Header />
         </Suspense>
         <StatsSkeleton />
         <SeparatorBorder className="h-12" />
@@ -50,11 +51,33 @@ export default function DashboardPage() {
         <Suspense fallback={<div className="p-8">Loading...</div>}>
           <Header />
         </Suspense>
-        <Stats data={items} />
+        <Suspense fallback={<StatsSkeleton />}>
+          <Stats data={items} />
+        </Suspense>
         <SeparatorBorder className="h-12" />
-        <ItemsWrapper data={items} />
+        <Suspense fallback={
+          <div className="p-5">
+            <div className="items-grid gap-4 mb-8">
+              {[...Array(6)].map((_, index) => (
+                <div key={index + 1} className="h-72 bg-accent rounded animate-pulse" />
+              ))}
+            </div>
+          </div>
+        }>
+          <ItemsWrapper />
+        </Suspense>
       </EnsureOnboarding>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<div className="p-8">Loading...</div>}>
+      <SemanticSearchProvider>
+        <DashboardContent />
+      </SemanticSearchProvider>
+    </Suspense>
   );
 }
 
@@ -68,13 +91,13 @@ function LoadingItems() {
   );
 }
 
-function StatsSkeleton() {
+export function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-8 border border-dashed rounded-lg min-h-[150px] animate-pulse">
-      <div className="h-full w-full bg-gray-200 rounded-md"></div>
-      <div className="h-full w-full bg-gray-200 rounded-md"></div>
-      <div className="h-full w-full bg-gray-200 rounded-md"></div>
-      <div className="h-full w-full bg-gray-200 rounded-md"></div>
+    <div className="grid grid-cols-1 h-24 border border-dashed md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 animate-pulse">
+      <div className="h-full w-full bg-accent"></div>
+      <div className="h-full w-full bg-accent"></div>
+      <div className="h-full w-full bg-accent"></div>
+      <div className="h-full w-full bg-accent"></div>
     </div>
   );
 }
