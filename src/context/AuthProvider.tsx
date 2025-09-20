@@ -1,9 +1,12 @@
 "use client";
 
+import { SyncSemanticStoreRequest } from "@/app/api/semantic-search/sync/route";
+import { updateSemanticStoreSyncStatus } from "@/service/actions/updateUserInfo";
+import { useUpsertUser } from "@/service/user/user";
+import { useWishlistItems } from "@/service/wishlist-item/wishlist-item";
+import { AuthContextInterface } from "@/types/auth";
 import { useClerk, useUser } from "@clerk/nextjs";
 import React, { useEffect, useMemo } from "react";
-import { AuthContextInterface } from "@/types/auth";
-import { useUpsertUser } from "@/service/user/user";
 import { toast } from "sonner";
 
 const authContext = React.createContext<AuthContextInterface | null>(null);
@@ -24,6 +27,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     data: upsertedUser,
   } = useUpsertUser();
 
+  // ✅ Load wishlist items inside the component with a hook
+  const { data: wishlistItems, isSuccess: isWishlistSuccess } = useWishlistItems();
+
+  // Sync user with DB
   useEffect(() => {
     if (isClerkLoaded && isSignedIn && clerkUser) {
       upsertDbUser(clerkUser);
@@ -33,17 +40,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [isClerkLoaded, isSignedIn, clerkUser, upsertDbUser]);
 
+  // Handle post-upsert logic + sync wishlist
   useEffect(() => {
     if (isUpsertSuccess && upsertedUser) {
       setUser(upsertedUser);
       setIsAuthenticated(true);
+
+      console.log("USER SYNC STATUS => ", user?.isSynchronisedWithVectorStore)
+
+      if (isWishlistSuccess && wishlistItems && user && !user.isSynchronisedWithVectorStore) {
+        syncWishlistItemsWithSemanticStore(upsertedUser.id, wishlistItems).then((response) => {
+          console.log("SYNC RESPONSE => ", response)
+          updateSemanticStoreSyncStatus(true).then(response => console.log("SYNC STATUS => ", response)).catch(err => console.error("ERROR UPDATING SYNC STATUS => ", err))
+        }).catch(err => console.error("Error Synchronising User Wishlist with Semantic Store => ", err))
+
+      }
     } else if (isUpsertError) {
       console.error("Error upserting user in AuthProvider:", upsertError);
       toast.error("Failed to sync user profile. Some features may be limited.");
       setUser(null);
       setIsAuthenticated(false);
     }
-  }, [isUpsertSuccess, upsertedUser, isUpsertError, upsertError]);
+  }, [
+    user,
+    isUpsertSuccess,
+    upsertedUser,
+    isUpsertError,
+    upsertError,
+    isWishlistSuccess,
+    wishlistItems,
+  ]);
 
   const handleSignOut = async () => {
     setUser(null);
@@ -76,7 +102,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       refetchUser,
       isLoading: overallLoading,
     }),
-    [user, clerkUser, isAuthenticated, handleSignOut, refetchUser, overallLoading],
+    [user, clerkUser, isAuthenticated, overallLoading] // handleSignOut & refetchUser are stable
   );
 
   return <authContext.Provider value={value}>{children}</authContext.Provider>;
@@ -89,3 +115,22 @@ export const useAuth = () => {
   }
   return context;
 };
+
+// --- plain async util (no hooks inside) ---
+async function syncWishlistItemsWithSemanticStore(
+  userId: string,
+  wishlistItems: any[]
+) {
+  const requestBody: SyncSemanticStoreRequest = {
+    userId,
+    userWishlistItems: wishlistItems,
+  };
+
+  const response = await fetch("/api/semantic-search/sync", {
+    method: "POST",
+    body: JSON.stringify(requestBody),
+  });
+
+  const result = await response.json();
+  return result;
+}

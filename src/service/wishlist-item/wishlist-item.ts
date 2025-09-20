@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type CreateWishlistItemRequest = {
   title: string;
@@ -135,20 +135,6 @@ export function useDeleteWishlistItem() {
   });
 }
 
-// Example of how you might fetch all wishlist items (e.g., for a list page)
-// This would typically go into a separate `queries.ts` file or similar.
-import { useQuery } from "@tanstack/react-query";
-
-async function getWishlistItems(): Promise<WishlistItem[]> {
-  const response = await fetch("/api/wishlist-item");
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to fetch wishlist items");
-  }
-  const data = await response.json();
-  return data.items;
-}
-
 // Example of how you might fetch a single wishlist item
 async function getWishlistItemById(id: string): Promise<WishlistItem> {
   const response = await fetch(`/api/wishlist-item/${id}`);
@@ -211,7 +197,7 @@ async function getPaginatedWishlistItemsClient(params: {
 }): Promise<WishlistItem[]> {
   const { purchased, page, limit } = params;
   const searchParams = new URLSearchParams();
-  
+
   if (purchased !== undefined) {
     searchParams.append("purchased", purchased.toString());
   }

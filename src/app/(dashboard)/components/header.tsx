@@ -1,15 +1,16 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
+import { useAuth } from "@/context/AuthProvider";
+import useSemanticSearch from "@/hooks/useSemanticSearch";
 import useToggleListType from "@/hooks/useToggleListType";
-import AddItemDialog from "./add-item-dialog";
 import { ArrowRight } from "lucide-react";
+import AddItemDialog from "./add-item-dialog";
+import { useSemanticSearchContext } from "@/context/SemanticSearchContext";
 
-export default function Header({
-  onItemAdded,
-}: {
-  readonly onItemAdded?: () => void;
-}) {
+export default function Header() {
   const { purchased, setPurchased } = useToggleListType();
+  const { user } = useAuth()
 
   return (
     <div className="flex p-8 items-center pb-5 border-x border-dashed justify-between w-full">
@@ -25,7 +26,29 @@ export default function Header({
           <ArrowRight className="size-4 stroke-1 group-hover:translate-x-1 transition-transform" />{" "}
         </button>
       </div>
-      <AddItemDialog />
+      <div className="flex items-center gap-2">
+        <SearchItem userId={user?.id || ""} />
+        <AddItemDialog />
+      </div>
     </div>
   );
+}
+
+function SearchItem({ userId }: { userId: string }) {
+
+  const { searchQuery, setSearchQuery } = useSemanticSearchContext()
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value
+    setSearchQuery(value)
+  }
+
+  return (
+    <Input
+      className="max-w-sm"
+      placeholder="Search"
+      value={searchQuery || ""}
+      onChange={handleChange}
+    />
+  )
 }

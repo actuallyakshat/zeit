@@ -21,7 +21,7 @@ export default function DashboardPage() {
     return (
       <div className="h-full w-full flex flex-col flex-1">
         <Suspense fallback={<div className="p-8">Loading...</div>}>
-          <Header /> 
+          <Header />
         </Suspense>
         <StatsSkeleton />
         <SeparatorBorder className="h-12" />
@@ -50,9 +50,21 @@ export default function DashboardPage() {
         <Suspense fallback={<div className="p-8">Loading...</div>}>
           <Header />
         </Suspense>
-        <Stats data={items} />
+        <Suspense fallback={<StatsSkeleton />}>
+          <Stats data={items} />
+        </Suspense>
         <SeparatorBorder className="h-12" />
-        <ItemsWrapper />
+        <Suspense fallback={
+          <div className="p-5">
+            <div className="items-grid gap-4 mb-8">
+              {[...Array(6)].map((_, index) => (
+                <div key={index + 1} className="h-72 bg-accent rounded animate-pulse" />
+              ))}
+            </div>
+          </div>
+        }>
+          <ItemsWrapper />
+        </Suspense>
       </EnsureOnboarding>
     </div>
   );

@@ -2,15 +2,14 @@
 
 import { db } from "@/db/drizzle";
 import { user } from "@/db/schema";
-import { formatActionResponse } from "@/lib/formatActionResponse";
-import { auth } from "@clerk/nextjs/server";
-import { eq } from "drizzle-orm";
 import {
   decryptMonthlyIncome,
   encryptMonthlyIncome,
   isEncrypted,
 } from "@/lib/encryption";
-import { InferSelectModel } from "drizzle-orm";
+import { formatActionResponse } from "@/lib/formatActionResponse";
+import { auth } from "@clerk/nextjs/server";
+import { eq, InferSelectModel } from "drizzle-orm";
 
 interface UpdateUserInfoRequest {
   monthlyIncome: number;
@@ -62,4 +61,32 @@ async function updateUserCalculationDetails(request: UpdateUserInfoRequest) {
   }
 }
 
-export { updateUserCalculationDetails };
+async function updateSemanticStoreSyncStatus(status: boolean) {
+  console.log("Updating semantic store sync status to:", status);
+
+  try {
+    const { userId: clerkId } = await auth();
+
+    if (!clerkId) {
+      throw new Error("Unauthorized");
+    }
+
+    const existingUser = await db
+      .update(user)
+      .set({
+        isSynchronisedWithVectorStore: status,
+        lastSyncedAt: new Date()
+      })
+      .where(eq(user.clerkId, clerkId))
+      .returning();
+
+    console.log("Updated semantic store sync status for user:", existingUser);
+
+    return existingUser
+  } catch (error) {
+    console.error("Error updating the sync status of user: ", error);
+  }
+}
+
+
+export { updateUserCalculationDetails, updateSemanticStoreSyncStatus };

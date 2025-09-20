@@ -1,13 +1,24 @@
+"use client";
+
+import { SemanticSearchProvider, useSemanticSearchContext } from "@/context/SemanticSearchContext";
 import useToggleListType from "@/hooks/useToggleListType";
-import { usePaginatedWishlistItems } from "@/service/wishlist-item/wishlist-item";
+import { usePaginatedWishlistItems, WishlistItem } from "@/service/wishlist-item/wishlist-item";
 import { useEffect, useState } from "react";
-import ItemsList from "./items-list";
+import ItemsList, { ItemCard } from "./items-list";
 import PaginationControls from "./pagination-controls";
 
 export default function ItemsWrapper() {
+  return (<SemanticSearchProvider>
+    <RenderItemsComponent />
+  </SemanticSearchProvider>)
+}
+
+function RenderItemsComponent() {
   const { purchased } = useToggleListType();
   const [page, setPage] = useState(1);
   const limit = 12;
+
+  const { searchPending, searchQuery, searchResults } = useSemanticSearchContext()
 
   // Reset to first page when purchased filter changes
   useEffect(() => {
@@ -29,12 +40,18 @@ export default function ItemsWrapper() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  if (searchQuery) {
+    console.log("searchResults => ", searchResults)
+    return <SearchResults data={searchResults as WishlistItem[]} isLoading={searchPending} />
+  }
+
+
   if (isLoading) {
     return (
       <div className="p-5">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-3 mb-8">
+        <div className="items-grid gap-4 mb-8">
           {[...Array(6)].map((_, index) => (
-            <div key={index} className="h-72 bg-accent rounded animate-pulse" />
+            <div key={index + 1} className="h-72 bg-accent rounded animate-pulse" />
           ))}
         </div>
       </div>
@@ -73,4 +90,38 @@ export default function ItemsWrapper() {
       />
     </div>
   );
+}
+
+function SearchResults({ data, isLoading }: { data: WishlistItem[], isLoading: boolean }) {
+
+  if (isLoading) {
+    return (
+      <div className="p-5">
+        <div className="items-grid gap-4 mb-8">
+          {[...Array(6)].map((_, index) => (
+            <div key={index + 1} className="h-72 bg-accent rounded animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!isLoading && (!data || data.length === 0)) {
+    return (
+      <div className="p-5 flex flex-col gap-1">
+        <h1 className="text-2xl tracking-tight">
+          No results found
+        </h1>
+        <p className="text-lg">We couldn&apos;t really find what you are looking for. How about you give the search another spin?</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="items-grid gap-4">
+      {data.map((item, index) => (
+        <ItemCard key={item.id} index={index} item={item} />
+      ))}
+    </div>
+  )
 }

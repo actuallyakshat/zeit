@@ -13,10 +13,10 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import {
-  useCreateWishlistItem, // Import the Tanstack Query mutation hook
-  useUpdateWishlistItem, // Import the Tanstack Query mutation hook
-  WishlistItem, // Make sure WishlistItem type is imported or defined
-} from "@/service/wishlist-item/wishlist-item"; // Adjust the path to your service file
+  useCreateWishlistItem,
+  useUpdateWishlistItem,
+  WishlistItem,
+} from "@/service/wishlist-item/wishlist-item";
 import React, { useEffect, useState } from "react";
 import { ItemCard } from "./items-list";
 
@@ -283,21 +283,21 @@ export default function AddItemDialog({
           <h2>Preview</h2>
           <div className="w-full">
             <ItemCard
-                index={0}
-                item={{
-                  title: title || "Item Title",
-                  description:
-                    description || "Item description will appear here.",
-                  url: url || "",
-                  imageUrl: imageUrl || "",
-                  price: price ? Number(price) : 0,
-                  purchased: purchased, // Use the state variable here
-                  id: item?.id || "preview-id", // Use actual item ID for edit preview
-                  userId: item?.userId || "preview-user",
-                  createdAt: item?.createdAt || new Date().toISOString(),
-                  updatedAt: item?.updatedAt || new Date().toISOString(),
-                }}
-              />
+              index={0}
+              item={{
+                title: title || "Item Title",
+                description:
+                  description || "Item description will appear here.",
+                url: url || "",
+                imageUrl: imageUrl || "",
+                price: price ? Number(price) : 0,
+                purchased: purchased,
+                id: item?.id || "preview-id",
+                userId: item?.userId || "preview-user",
+                createdAt: item?.createdAt || new Date().toISOString(),
+                updatedAt: item?.updatedAt || new Date().toISOString(),
+              }}
+            />
           </div>
         </div>
       </DialogContent>

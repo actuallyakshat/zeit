@@ -142,7 +142,7 @@ const items: WishlistItem[] = [
 
 function LandingItemCardsSection() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="items-grid gap-4">
       {items.map((item, index) => (
         <ItemCard key={item.title} index={index} item={item} preview={true} />
       ))}

@@ -28,7 +28,7 @@ export type ItemsListProps = {
 export default function ItemsList({ purchased, items }: ItemsListProps) {
   return (
     <div className="flex-1">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+      <div className="items-grid mb-8">
         {items.map((item, index) => (
           <ItemCard key={item.id} index={index} item={item} />
         ))}

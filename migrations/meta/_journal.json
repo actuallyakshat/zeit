@@ -36,6 +36,13 @@
       "when": 1757948811181,
       "tag": "0004_milky_mongoose",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1758301744007,
+      "tag": "0005_living_roulette",
+      "breakpoints": true
     }
   ]
 }
