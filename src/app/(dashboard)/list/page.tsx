@@ -1,6 +1,7 @@
 "use client"; // This directive marks it as a Client Component
 
 import { SeparatorBorder } from "@/components/ui/seperator";
+import { SemanticSearchProvider } from "@/context/SemanticSearchContext";
 import { EnsureOnboarding } from "@/service/user/ensure-onboarding";
 import { useWishlistItems } from "@/service/wishlist-item/wishlist-item"; // Import the client-side hook
 import { Loader } from "lucide-react";
@@ -9,7 +10,7 @@ import Header from "../components/header";
 import ItemsWrapper from "../components/items-wrapper";
 import Stats from "../components/stats";
 
-export default function DashboardPage() {
+function DashboardContent() {
   const {
     data: wishlistItems,
     isLoading,
@@ -70,6 +71,16 @@ export default function DashboardPage() {
   );
 }
 
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<div className="p-8">Loading...</div>}>
+      <SemanticSearchProvider>
+        <DashboardContent />
+      </SemanticSearchProvider>
+    </Suspense>
+  );
+}
+
 function LoadingItems() {
   return (
     <div className="flex-1 border border-dashed flex items-center justify-center">
@@ -80,9 +91,9 @@ function LoadingItems() {
   );
 }
 
-function StatsSkeleton() {
+export function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-1 h-20 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 border border-dashed rounded-lg min-h-[150px] animate-pulse">
+    <div className="grid grid-cols-1 h-24 border border-dashed md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 animate-pulse">
       <div className="h-full w-full bg-accent"></div>
       <div className="h-full w-full bg-accent"></div>
       <div className="h-full w-full bg-accent"></div>

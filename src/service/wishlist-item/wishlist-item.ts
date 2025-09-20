@@ -187,15 +187,17 @@ async function getWishlistItemsClient(): Promise<WishlistItem[]> {
 
 /**
  * Client-side function to fetch paginated wishlist items
- * @param params Pagination and filter parameters
+ * @param params Pagination, filter, and sort parameters
  * @returns Paginated wishlist items
  */
 async function getPaginatedWishlistItemsClient(params: {
   purchased?: boolean;
   page: number;
   limit: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }): Promise<WishlistItem[]> {
-  const { purchased, page, limit } = params;
+  const { purchased, page, limit, sortBy, sortOrder } = params;
   const searchParams = new URLSearchParams();
 
   if (purchased !== undefined) {
@@ -203,6 +205,14 @@ async function getPaginatedWishlistItemsClient(params: {
   }
   searchParams.append("page", page.toString());
   searchParams.append("limit", limit.toString());
+  
+  if (sortBy) {
+    searchParams.append("sortBy", sortBy);
+  }
+  
+  if (sortOrder) {
+    searchParams.append("sortOrder", sortOrder);
+  }
 
   const response = await fetch(`/api/wishlist-item?${searchParams.toString()}`);
   if (!response.ok) {
@@ -228,13 +238,15 @@ export function useWishlistItems() {
 
 /**
  * Tanstack Query hook to fetch paginated wishlist items
- * @param params Pagination and filter parameters
+ * @param params Pagination, filter, and sort parameters
  * @returns Paginated wishlist items query
  */
 export function usePaginatedWishlistItems(params: {
   purchased?: boolean;
   page: number;
   limit: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }) {
   return useQuery<WishlistItem[], Error>({
     queryKey: ["wishlistItems", params],

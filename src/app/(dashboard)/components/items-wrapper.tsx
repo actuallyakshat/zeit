@@ -6,19 +6,19 @@ import { usePaginatedWishlistItems, WishlistItem } from "@/service/wishlist-item
 import { useEffect, useState } from "react";
 import ItemsList, { ItemCard } from "./items-list";
 import PaginationControls from "./pagination-controls";
+import SortingControls from "./sorting-controls";
+
 
 export default function ItemsWrapper() {
-  return (<SemanticSearchProvider>
-    <RenderItemsComponent />
-  </SemanticSearchProvider>)
-}
-
-function RenderItemsComponent() {
   const { purchased } = useToggleListType();
   const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState<
+    "title" | "price" | "createdAt" | "updatedAt"
+  >("createdAt");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const limit = 12;
 
-  const { searchPending, searchQuery, searchResults } = useSemanticSearchContext()
+  const { searchPending, searchQuery, searchResults } = useSemanticSearchContext();
 
   // Reset to first page when purchased filter changes
   useEffect(() => {
@@ -29,6 +29,8 @@ function RenderItemsComponent() {
     purchased: purchased !== null ? purchased : undefined,
     page,
     limit,
+    sortBy,
+    sortOrder,
   });
 
   const itemsData = data || [];
@@ -40,11 +42,25 @@ function RenderItemsComponent() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (searchQuery) {
-    console.log("searchResults => ", searchResults)
-    return <SearchResults data={searchResults as WishlistItem[]} isLoading={searchPending} />
-  }
+  const handleSortChange = (newSortBy: string, newSortOrder: "asc" | "desc") => {
+    setSortBy(newSortBy as "createdAt" | "title" | "price" | "updatedAt");
+    setSortOrder(newSortOrder);
+    setPage(1); // Reset to first page when sorting changes
+  };
 
+  const handleSortClear = () => {
+    setSortBy("createdAt");
+    setSortOrder('desc');
+    setPage(1); // Reset page when clearing sort
+  };
+
+  if (searchQuery) {
+    return (
+      <SemanticSearchProvider>
+        <SearchResults isLoading={searchPending} searchResults={searchResults as WishlistItem[]} />
+      </SemanticSearchProvider>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -81,6 +97,14 @@ function RenderItemsComponent() {
 
   return (
     <div className="flex flex-col border-x border-dashed h-full">
+      <div className="p-4 border-b">
+        <SortingControls
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSortChange={handleSortChange}
+          onClearSort={handleSortClear} // Pass the clear handler
+        />
+      </div>
       <ItemsList purchased={purchased ?? false} items={itemsData} />
       <PaginationControls
         currentPage={page}
@@ -92,7 +116,7 @@ function RenderItemsComponent() {
   );
 }
 
-function SearchResults({ data, isLoading }: { data: WishlistItem[], isLoading: boolean }) {
+function SearchResults({ isLoading, searchResults }: { isLoading: boolean, searchResults: WishlistItem[] }) {
 
   if (isLoading) {
     return (
@@ -106,22 +130,22 @@ function SearchResults({ data, isLoading }: { data: WishlistItem[], isLoading: b
     );
   }
 
-  if (!isLoading && (!data || data.length === 0)) {
+  if (!isLoading && (!searchResults || searchResults?.length === 0)) {
     return (
       <div className="p-5 flex flex-col gap-1">
-        <h1 className="text-2xl tracking-tight">
-          No results found
-        </h1>
-        <p className="text-lg">We couldn&apos;t really find what you are looking for. How about you give the search another spin?</p>
+        <h1 className="text-2xl tracking-tight">No results found</h1>
+        <p className="text-lg">
+          We couldn&apos;t really find what you are looking for. How about you give the search another spin?
+        </p>
       </div>
-    )
+    );
   }
 
   return (
     <div className="items-grid gap-4">
-      {data.map((item, index) => (
+      {searchResults?.map((item: WishlistItem, index: number) => (
         <ItemCard key={item.id} index={index} item={item} />
       ))}
     </div>
-  )
+  );
 }
