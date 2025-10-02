@@ -17,7 +17,7 @@ export type CreateWishlistItemRequest = {
  * @returns The created wishlist item
  */
 async function createWishlistItem(
-  item: CreateWishlistItemRequest,
+  item: CreateWishlistItemRequest
 ): Promise<WishlistItem> {
   const response = await fetch("/api/wishlist-item", {
     method: "POST",
@@ -66,7 +66,7 @@ export type UpdateWishlistItemRequest = {
  * @returns The updated wishlist item
  */
 async function updateWishlistItem(
-  item: UpdateWishlistItemRequest,
+  item: UpdateWishlistItemRequest
 ): Promise<WishlistItem> {
   const response = await fetch(`/api/wishlist-item/${item.id}`, {
     method: "PUT",
@@ -91,10 +91,7 @@ export function useUpdateWishlistItem() {
     mutationFn: updateWishlistItem,
     onSuccess: (updatedItem) => {
       queryClient.invalidateQueries({ queryKey: ["wishlistItems"] });
-      queryClient.setQueryData(
-        ["wishlistItem", updatedItem.id],
-        updatedItem,
-      );
+      queryClient.setQueryData(["wishlistItem", updatedItem.id], updatedItem);
     },
     onError: (error) => {
       console.error("Error updating wishlist item:", error);
@@ -205,11 +202,11 @@ async function getPaginatedWishlistItemsClient(params: {
   }
   searchParams.append("page", page.toString());
   searchParams.append("limit", limit.toString());
-  
+
   if (sortBy) {
     searchParams.append("sortBy", sortBy);
   }
-  
+
   if (sortOrder) {
     searchParams.append("sortOrder", sortOrder);
   }

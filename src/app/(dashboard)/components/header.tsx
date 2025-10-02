@@ -10,7 +10,7 @@ import { useSemanticSearchContext } from "@/context/SemanticSearchContext";
 
 export default function Header() {
   const { purchased, setPurchased } = useToggleListType();
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   return (
     <div className="flex p-8 items-center pb-5 border-x border-dashed justify-between w-full">
@@ -35,12 +35,11 @@ export default function Header() {
 }
 
 function SearchItem({ userId }: { userId: string }) {
-
-  const { searchQuery, setSearchQuery } = useSemanticSearchContext()
+  const { searchQuery, setSearchQuery } = useSemanticSearchContext();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value
-    setSearchQuery(value)
+    const value = e.target.value;
+    setSearchQuery(value);
   }
 
   return (
@@ -50,5 +49,5 @@ function SearchItem({ userId }: { userId: string }) {
       value={searchQuery || ""}
       onChange={handleChange}
     />
-  )
+  );
 }

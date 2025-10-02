@@ -33,18 +33,18 @@ export default function Stats({
   // Calculate time values based on user's income
   const timeSpentString = user?.monthlyIncome
     ? getTimeToAffordRouter(
-      totalSpent,
-      Number(user.monthlyIncome),
-      user.numberOfWorkingDays || undefined,
-    )
+        totalSpent,
+        Number(user.monthlyIncome),
+        user.numberOfWorkingDays || undefined
+      )
     : "Set your income in settings";
 
   const timeRequiredString = user?.monthlyIncome
     ? getTimeToAffordRouter(
-      timeRemaining,
-      Number(user.monthlyIncome),
-      user.numberOfWorkingDays || undefined,
-    )
+        timeRemaining,
+        Number(user.monthlyIncome),
+        user.numberOfWorkingDays || undefined
+      )
     : "Set your income in settings";
 
   const itemsInWishlistCount = itemsInWishlist.length;
@@ -95,8 +95,9 @@ function Card({
 }) {
   return (
     <div
-      className={`flex flex-col items-center justify-center p-4 ${hideBorder ? "" : "border-r"
-        } `}
+      className={`flex flex-col items-center justify-center p-4 ${
+        hideBorder ? "" : "border-r"
+      } `}
     >
       <h2 className="text-xl font-medium tracking-tight">{title}</h2>
       <p className="text-muted-foreground">{content}</p>

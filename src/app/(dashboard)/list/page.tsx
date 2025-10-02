@@ -11,12 +11,7 @@ import ItemsWrapper from "../components/items-wrapper";
 import Stats from "../components/stats";
 
 function DashboardContent() {
-  const {
-    data: wishlistItems,
-    isLoading,
-    isError,
-    error,
-  } = useWishlistItems();
+  const { data: wishlistItems, isLoading, isError, error } = useWishlistItems();
 
   if (isLoading) {
     return (
@@ -55,15 +50,20 @@ function DashboardContent() {
           <Stats data={items} />
         </Suspense>
         <SeparatorBorder className="h-12" />
-        <Suspense fallback={
-          <div className="p-5">
-            <div className="items-grid gap-4 mb-8">
-              {[...Array(6)].map((_, index) => (
-                <div key={index + 1} className="h-72 bg-accent rounded animate-pulse" />
-              ))}
+        <Suspense
+          fallback={
+            <div className="p-5">
+              <div className="items-grid gap-4 mb-8">
+                {[...Array(6)].map((_, index) => (
+                  <div
+                    key={index + 1}
+                    className="h-72 bg-accent rounded animate-pulse"
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        }>
+          }
+        >
           <ItemsWrapper />
         </Suspense>
       </EnsureOnboarding>

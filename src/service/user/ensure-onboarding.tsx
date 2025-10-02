@@ -14,13 +14,16 @@ export function EnsureOnboarding({
 }) {
   const { user, isLoading } = useAuth();
 
-  if (isLoading) return <div className="flex-1 border-x border-dashed">
-    <Suspense>
-      <Header />
-      <StatsSkeleton />
-      <SeparatorBorder className="h-12" />
-    </Suspense>
-  </div>;
+  if (isLoading)
+    return (
+      <div className="flex-1 border-x border-dashed">
+        <Suspense>
+          <Header />
+          <StatsSkeleton />
+          <SeparatorBorder className="h-12" />
+        </Suspense>
+      </div>
+    );
 
   if (!Number(user?.monthlyIncome) || isNaN(Number(user?.monthlyIncome))) {
     return <CalculationDetailsForm />;

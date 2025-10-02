@@ -32,7 +32,6 @@ export const user = pgTable("user", {
   ).default(false),
   lastSyncedAt: timestamp("last_synced_at"),
 
-
   //record metadata
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),

@@ -26,11 +26,11 @@ export default function PaginationControls({
         <ChevronLeft className="h-4 w-4 mr-2" />
         Previous
       </Button>
-      
+
       <div className="text-sm font-medium">
         Page {currentPage} of {totalPages}
       </div>
-      
+
       <Button
         variant="link"
         size="sm"

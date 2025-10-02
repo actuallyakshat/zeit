@@ -125,22 +125,26 @@
 @layer utilities {
   .bg-crisscross {
     /* Single diagonal pattern, light mode/fallback */
-    background-image: repeating-linear-gradient(315deg,
-        theme('colors.slate.950') 0px,
-        theme('colors.slate.950') 1px,
-        transparent 1px,
-        transparent 50%);
+    background-image: repeating-linear-gradient(
+      315deg,
+      theme("colors.slate.950") 0px,
+      theme("colors.slate.950") 1px,
+      transparent 1px,
+      transparent 50%
+    );
     background-size: 10px 10px;
     background-attachment: fixed;
   }
 
   .dark .bg-crisscross {
     /* Dark mode override */
-    background-image: repeating-linear-gradient(315deg,
-        theme('colors.white') 0px,
-        theme('colors.white') 1px,
-        transparent 1px,
-        transparent 50%);
+    background-image: repeating-linear-gradient(
+      315deg,
+      theme("colors.white") 0px,
+      theme("colors.white") 1px,
+      transparent 1px,
+      transparent 50%
+    );
   }
 }
 

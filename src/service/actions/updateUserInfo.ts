@@ -75,18 +75,17 @@ async function updateSemanticStoreSyncStatus(status: boolean) {
       .update(user)
       .set({
         isSynchronisedWithVectorStore: status,
-        lastSyncedAt: new Date()
+        lastSyncedAt: new Date(),
       })
       .where(eq(user.clerkId, clerkId))
       .returning();
 
     console.log("Updated semantic store sync status for user:", existingUser);
 
-    return existingUser
+    return existingUser;
   } catch (error) {
     console.error("Error updating the sync status of user: ", error);
   }
 }
-
 
 export { updateUserCalculationDetails, updateSemanticStoreSyncStatus };

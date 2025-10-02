@@ -1,13 +1,18 @@
 "use client";
 
-import { SemanticSearchProvider, useSemanticSearchContext } from "@/context/SemanticSearchContext";
+import {
+  SemanticSearchProvider,
+  useSemanticSearchContext,
+} from "@/context/SemanticSearchContext";
 import useToggleListType from "@/hooks/useToggleListType";
-import { usePaginatedWishlistItems, WishlistItem } from "@/service/wishlist-item/wishlist-item";
+import {
+  usePaginatedWishlistItems,
+  WishlistItem,
+} from "@/service/wishlist-item/wishlist-item";
 import { useEffect, useState } from "react";
 import ItemsList, { ItemCard } from "./items-list";
 import PaginationControls from "./pagination-controls";
 import SortingControls from "./sorting-controls";
-
 
 export default function ItemsWrapper() {
   const { purchased } = useToggleListType();
@@ -18,7 +23,8 @@ export default function ItemsWrapper() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const limit = 12;
 
-  const { searchPending, searchQuery, searchResults } = useSemanticSearchContext();
+  const { searchPending, searchQuery, searchResults } =
+    useSemanticSearchContext();
 
   // Reset to first page when purchased filter changes
   useEffect(() => {
@@ -42,7 +48,10 @@ export default function ItemsWrapper() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleSortChange = (newSortBy: string, newSortOrder: "asc" | "desc") => {
+  const handleSortChange = (
+    newSortBy: string,
+    newSortOrder: "asc" | "desc"
+  ) => {
     setSortBy(newSortBy as "createdAt" | "title" | "price" | "updatedAt");
     setSortOrder(newSortOrder);
     setPage(1); // Reset to first page when sorting changes
@@ -50,14 +59,17 @@ export default function ItemsWrapper() {
 
   const handleSortClear = () => {
     setSortBy("createdAt");
-    setSortOrder('desc');
+    setSortOrder("desc");
     setPage(1); // Reset page when clearing sort
   };
 
   if (searchQuery) {
     return (
       <SemanticSearchProvider>
-        <SearchResults isLoading={searchPending} searchResults={searchResults as WishlistItem[]} />
+        <SearchResults
+          isLoading={searchPending}
+          searchResults={searchResults as WishlistItem[]}
+        />
       </SemanticSearchProvider>
     );
   }
@@ -67,7 +79,10 @@ export default function ItemsWrapper() {
       <div className="p-5">
         <div className="items-grid gap-4 mb-8">
           {[...Array(6)].map((_, index) => (
-            <div key={index + 1} className="h-72 bg-accent rounded animate-pulse" />
+            <div
+              key={index + 1}
+              className="h-72 bg-accent rounded animate-pulse"
+            />
           ))}
         </div>
       </div>
@@ -96,7 +111,7 @@ export default function ItemsWrapper() {
   }
 
   return (
-    <div className="flex flex-col border-x border-dashed h-full">
+    <div className="flex flex-col flex-1 border-x border-dashed h-full">
       <div className="p-4 border-b">
         <SortingControls
           sortBy={sortBy}
@@ -116,14 +131,22 @@ export default function ItemsWrapper() {
   );
 }
 
-function SearchResults({ isLoading, searchResults }: { isLoading: boolean, searchResults: WishlistItem[] }) {
-
+function SearchResults({
+  isLoading,
+  searchResults,
+}: {
+  isLoading: boolean;
+  searchResults: WishlistItem[];
+}) {
   if (isLoading) {
     return (
       <div className="p-5">
         <div className="items-grid gap-4 mb-8">
           {[...Array(6)].map((_, index) => (
-            <div key={index + 1} className="h-72 bg-accent rounded animate-pulse" />
+            <div
+              key={index + 1}
+              className="h-72 bg-accent rounded animate-pulse"
+            />
           ))}
         </div>
       </div>
@@ -135,7 +158,8 @@ function SearchResults({ isLoading, searchResults }: { isLoading: boolean, searc
       <div className="p-5 flex flex-col gap-1">
         <h1 className="text-2xl tracking-tight">No results found</h1>
         <p className="text-lg">
-          We couldn&apos;t really find what you are looking for. How about you give the search another spin?
+          We couldn&apos;t really find what you are looking for. How about you
+          give the search another spin?
         </p>
       </div>
     );

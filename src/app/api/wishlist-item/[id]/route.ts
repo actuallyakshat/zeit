@@ -49,14 +49,16 @@ export async function PUT(
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
-    const formattedResponse = formatActionResponse({ item: updatedItem }, true, 200)
+    const formattedResponse = formatActionResponse(
+      { item: updatedItem },
+      true,
+      200
+    );
     return NextResponse.json(formattedResponse);
   } catch (error) {
     console.error("Error updating wishlist item:", error);
-    const errorResponse = await formatActionResponse({ error }, false, 500)
-    return NextResponse.json(
-      errorResponse
-    );
+    const errorResponse = await formatActionResponse({ error }, false, 500);
+    return NextResponse.json(errorResponse);
   }
 }
 
@@ -92,13 +94,15 @@ export async function DELETE(
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
-    const formattedResponse = formatActionResponse({ message: "Success" }, true, 204)
+    const formattedResponse = formatActionResponse(
+      { message: "Success" },
+      true,
+      204
+    );
     return NextResponse.json(formattedResponse);
   } catch (error) {
     console.error("Error deleting wishlist item:", error);
-    const errorResponse = formatActionResponse({ error }, false, 500)
-    return NextResponse.json(
-      errorResponse
-    );
+    const errorResponse = formatActionResponse({ error }, false, 500);
+    return NextResponse.json(errorResponse);
   }
 }

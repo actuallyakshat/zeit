@@ -1,6 +1,9 @@
 import { db } from "@/db/drizzle";
 import { user, wishlistItem } from "@/db/schema";
-import { CreateWishlistItemRequest, WishlistItem } from "@/service/wishlist-item/wishlist-item";
+import {
+  CreateWishlistItemRequest,
+  WishlistItem,
+} from "@/service/wishlist-item/wishlist-item";
 import { auth } from "@clerk/nextjs/server";
 import { and, desc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -103,8 +106,10 @@ export async function GET(req: NextRequest) {
 
     // Validate sortBy parameter
     const validSortFields = ["title", "price", "createdAt", "updatedAt"];
-    const orderByField = validSortFields.includes(sortBy) ? sortBy : "createdAt";
-    
+    const orderByField = validSortFields.includes(sortBy)
+      ? sortBy
+      : "createdAt";
+
     // Build and execute query with filtering, pagination, and sorting
     const query = db
       .select()
@@ -115,13 +120,25 @@ export async function GET(req: NextRequest) {
 
     // Apply sorting
     if (orderByField === "title") {
-      query.orderBy(sortOrder === "asc" ? wishlistItem.title : desc(wishlistItem.title));
+      query.orderBy(
+        sortOrder === "asc" ? wishlistItem.title : desc(wishlistItem.title)
+      );
     } else if (orderByField === "price") {
-      query.orderBy(sortOrder === "asc" ? wishlistItem.price : desc(wishlistItem.price));
+      query.orderBy(
+        sortOrder === "asc" ? wishlistItem.price : desc(wishlistItem.price)
+      );
     } else if (orderByField === "createdAt") {
-      query.orderBy(sortOrder === "asc" ? wishlistItem.createdAt : desc(wishlistItem.createdAt));
+      query.orderBy(
+        sortOrder === "asc"
+          ? wishlistItem.createdAt
+          : desc(wishlistItem.createdAt)
+      );
     } else if (orderByField === "updatedAt") {
-      query.orderBy(sortOrder === "asc" ? wishlistItem.updatedAt : desc(wishlistItem.updatedAt));
+      query.orderBy(
+        sortOrder === "asc"
+          ? wishlistItem.updatedAt
+          : desc(wishlistItem.updatedAt)
+      );
     }
 
     const items: WishlistItem[] = await query;

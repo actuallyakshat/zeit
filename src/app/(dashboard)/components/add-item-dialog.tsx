@@ -270,11 +270,7 @@ export default function AddItemDialog({
             </div>
             <DialogFooter>
               <Button type="submit" disabled={isLoading}>
-                {isLoading
-                  ? "Saving..."
-                  : isEdit
-                    ? "Save Changes"
-                    : "Add Item"}
+                {isLoading ? "Saving..." : isEdit ? "Save Changes" : "Add Item"}
               </Button>
             </DialogFooter>
           </form>

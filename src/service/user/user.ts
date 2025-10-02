@@ -24,7 +24,9 @@ export interface SyncUserRequest {
  * This is the actual API call function, now isolated for useMutation.
  * @returns The database user record
  */
-async function performUpsertUser(requestData: SyncUserRequest): Promise<DbUser> {
+async function performUpsertUser(
+  requestData: SyncUserRequest
+): Promise<DbUser> {
   const response = await fetch("/api/user", {
     method: "POST",
     headers: {
@@ -63,7 +65,9 @@ export function useUpsertUser() {
     onSuccess: (data) => {
       // Invalidate relevant queries or update cache if needed
       // For example, if you have a query to fetch the current user:
-      queryClient.invalidateQueries({ queryKey: ["currentUser", data.clerkId] });
+      queryClient.invalidateQueries({
+        queryKey: ["currentUser", data.clerkId],
+      });
       queryClient.setQueryData(["currentUser", data.clerkId], data);
       console.log("User upserted successfully:", data);
       // You might also want to display a toast notification here

@@ -28,7 +28,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   } = useUpsertUser();
 
   // ✅ Load wishlist items inside the component with a hook
-  const { data: wishlistItems, isSuccess: isWishlistSuccess } = useWishlistItems();
+  const { data: wishlistItems, isSuccess: isWishlistSuccess } =
+    useWishlistItems();
 
   // Sync user with DB
   useEffect(() => {
@@ -46,14 +47,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(upsertedUser);
       setIsAuthenticated(true);
 
-      console.log("USER SYNC STATUS => ", user?.isSynchronisedWithVectorStore)
+      console.log("USER SYNC STATUS => ", user?.isSynchronisedWithVectorStore);
 
-      if (isWishlistSuccess && wishlistItems && user && !user.isSynchronisedWithVectorStore) {
-        syncWishlistItemsWithSemanticStore(upsertedUser.id, wishlistItems).then((response) => {
-          console.log("SYNC RESPONSE => ", response)
-          updateSemanticStoreSyncStatus(true).then(response => console.log("SYNC STATUS => ", response)).catch(err => console.error("ERROR UPDATING SYNC STATUS => ", err))
-        }).catch(err => console.error("Error Synchronising User Wishlist with Semantic Store => ", err))
-
+      if (
+        isWishlistSuccess &&
+        wishlistItems &&
+        user &&
+        !user.isSynchronisedWithVectorStore
+      ) {
+        syncWishlistItemsWithSemanticStore(upsertedUser.id, wishlistItems)
+          .then((response) => {
+            console.log("SYNC RESPONSE => ", response);
+            updateSemanticStoreSyncStatus(true)
+              .then((response) => console.log("SYNC STATUS => ", response))
+              .catch((err) =>
+                console.error("ERROR UPDATING SYNC STATUS => ", err)
+              );
+          })
+          .catch((err) =>
+            console.error(
+              "Error Synchronising User Wishlist with Semantic Store => ",
+              err
+            )
+          );
       }
     } else if (isUpsertError) {
       console.error("Error upserting user in AuthProvider:", upsertError);
