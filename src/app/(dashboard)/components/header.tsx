@@ -15,7 +15,7 @@ export default function Header() {
   return (
     <div className="flex p-8 items-center pb-5 border-x border-dashed justify-between w-full">
       <div className="space-y-2">
-        <h1 className="text-5xl ">
+        <h1 className="text-5xl">
           {`${purchased ? "Purchased List" : "Wishlist"}`}{" "}
         </h1>
         <button

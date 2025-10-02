@@ -35,6 +35,9 @@ export default function Navbar() {
             Logout
           </button>
         )}
+        <Link href={"/cook"} className="hover:underline cursor-pointer">
+          Cook
+        </Link>
         <Link href="/settings" className="hover:underline">
           Settings
         </Link>

@@ -95,7 +95,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     try {
       await upsertDbUser(clerkUser);
-      toast.success("User profile refreshed!");
     } catch (err) {
       console.error("Error refetching user:", err);
       toast.error("Failed to refresh user profile.");

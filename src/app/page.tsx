@@ -2,10 +2,10 @@ import { Button } from "@/components/ui/button";
 import CTAButton from "@/components/ui/cta-button";
 import PronunciationButton from "@/components/ui/pronunciation-button";
 import { SeparatorBorder } from "@/components/ui/seperator";
+import { WishlistItem } from "@/service/wishlist-item/wishlist-item";
 import { GithubIcon } from "lucide-react";
 import Link from "next/link";
-import { ItemCard } from "./(dashboard)/components/items-list";
-import { WishlistItem } from "@/service/wishlist-item/wishlist-item";
+import { ItemCard } from "./(dashboard)/components/item-card";
 
 export default function Home() {
   return (

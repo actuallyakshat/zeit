@@ -18,7 +18,7 @@ import {
   WishlistItem,
 } from "@/service/wishlist-item/wishlist-item";
 import React, { useEffect, useState } from "react";
-import { ItemCard } from "./items-list";
+import { ItemCard } from "./item-card";
 
 export default function AddItemDialog({
   isEdit,

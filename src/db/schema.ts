@@ -53,3 +53,23 @@ export const wishlistItem = pgTable("wishlist_item", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+export const cookItem = pgTable("cook_item", {
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => user.id, {
+      onDelete: "cascade",
+    }),
+  itemId: uuid("item_id")
+    .notNull()
+    .references(() => wishlistItem.id, {
+      onDelete: "cascade",
+    }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  isCooked: boolean("is_cooked").notNull().default(false),
+  isEmailSent: boolean("is_email_sent").notNull().default(false),
+});

@@ -10,9 +10,10 @@ import {
   WishlistItem,
 } from "@/service/wishlist-item/wishlist-item";
 import { useEffect, useState } from "react";
-import ItemsList, { ItemCard } from "./items-list";
 import PaginationControls from "./pagination-controls";
 import SortingControls from "./sorting-controls";
+import ItemsList from "./items-list";
+import { ItemCard } from "./item-card";
 
 export default function ItemsWrapper() {
   const { purchased } = useToggleListType();
