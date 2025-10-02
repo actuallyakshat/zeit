@@ -62,8 +62,6 @@ async function updateUserCalculationDetails(request: UpdateUserInfoRequest) {
 }
 
 async function updateSemanticStoreSyncStatus(status: boolean) {
-  console.log("Updating semantic store sync status to:", status);
-
   try {
     const { userId: clerkId } = await auth();
 
@@ -79,8 +77,6 @@ async function updateSemanticStoreSyncStatus(status: boolean) {
       })
       .where(eq(user.clerkId, clerkId))
       .returning();
-
-    console.log("Updated semantic store sync status for user:", existingUser);
 
     return existingUser;
   } catch (error) {

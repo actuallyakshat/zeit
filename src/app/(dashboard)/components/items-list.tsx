@@ -27,7 +27,7 @@ export type ItemsListProps = {
 
 export default function ItemsList({ purchased, items }: ItemsListProps) {
   return (
-    <div className="flex-1">
+    <div className="flex-1 px-2">
       <div className="items-grid mb-8">
         {items.map((item, index) => (
           <ItemCard key={item.id} index={index} item={item} />
@@ -66,7 +66,7 @@ export function ItemCard({
   }
 
   return (
-    <div className="p-4">
+    <div className="py-4 px-1.5">
       {item.imageUrl ? (
         <img
           src={item.imageUrl}
@@ -78,7 +78,7 @@ export function ItemCard({
           <span className="text-gray-500">No image</span>
         </div>
       )}
-      <div className="mt-4">
+      <div className="mt-2.5">
         <div className="flex items-center gap-2 justify-between">
           <h2 className="text-xl mb-1">{item.title}</h2>
           {!preview && <ItemActions item={item} />}
@@ -87,7 +87,7 @@ export function ItemCard({
           description={item.description || "No description"}
         />
         <p className="mt-1 text-base font-light">{formattedPrice}</p>
-        <h3 className="font-semibold text-lg mt-2">
+        <h3 className="font-medium mt-2">
           {getTimeToAffordRouter(
             item.price,
             Number(monthlyIncome) || 0,

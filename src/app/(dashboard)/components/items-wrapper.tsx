@@ -76,12 +76,12 @@ export default function ItemsWrapper() {
 
   if (isLoading) {
     return (
-      <div className="p-5">
+      <div className="p-5 flex-1 border-x border-dashed">
         <div className="items-grid gap-4 mb-8">
           {[...Array(6)].map((_, index) => (
             <div
               key={index + 1}
-              className="h-72 bg-accent rounded animate-pulse"
+              className="h-72 bg-accent rounded-xs animate-pulse"
             />
           ))}
         </div>
@@ -100,7 +100,7 @@ export default function ItemsWrapper() {
 
   if (itemsData.length === 0) {
     return (
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col flex-1 border-dashed border-x h-full">
         <p className="p-8 text-xl text-muted-foreground flex-1">
           {purchased
             ? "You haven't purchased any items yet."

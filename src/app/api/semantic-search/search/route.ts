@@ -23,10 +23,7 @@ export async function POST(request: NextRequest) {
       query,
     });
 
-    console.log("response => ", response);
-
     const relevantResults = response.filter((item) => item.score > 0.5);
-    console.log("relevantResults => ", relevantResults);
     const transformesResults = transformToWishlistItem(relevantResults, userId);
 
     const formattedResponse = formatActionResponse(

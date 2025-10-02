@@ -69,7 +69,6 @@ export function useUpsertUser() {
         queryKey: ["currentUser", data.clerkId],
       });
       queryClient.setQueryData(["currentUser", data.clerkId], data);
-      console.log("User upserted successfully:", data);
       // You might also want to display a toast notification here
     },
     onError: (error) => {

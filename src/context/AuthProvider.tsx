@@ -47,8 +47,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(upsertedUser);
       setIsAuthenticated(true);
 
-      console.log("USER SYNC STATUS => ", user?.isSynchronisedWithVectorStore);
-
       if (
         isWishlistSuccess &&
         wishlistItems &&
@@ -57,12 +55,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       ) {
         syncWishlistItemsWithSemanticStore(upsertedUser.id, wishlistItems)
           .then((response) => {
-            console.log("SYNC RESPONSE => ", response);
-            updateSemanticStoreSyncStatus(true)
-              .then((response) => console.log("SYNC STATUS => ", response))
-              .catch((err) =>
-                console.error("ERROR UPDATING SYNC STATUS => ", err)
-              );
+            updateSemanticStoreSyncStatus(true).catch((err) =>
+              console.error("ERROR UPDATING SYNC STATUS => ", err)
+            );
           })
           .catch((err) =>
             console.error(
