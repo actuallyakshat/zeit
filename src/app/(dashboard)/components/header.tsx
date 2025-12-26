@@ -2,11 +2,10 @@
 
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthProvider";
-import useSemanticSearch from "@/hooks/useSemanticSearch";
 import useToggleListType from "@/hooks/useToggleListType";
 import { ArrowRight } from "lucide-react";
 import AddItemDialog from "./add-item-dialog";
-import { useSemanticSearchContext } from "@/context/SemanticSearchContext";
+import { useFuzzySearchContext } from "@/context/FuzzySearchContext";
 
 export default function Header() {
   const { purchased, setPurchased } = useToggleListType();
@@ -35,7 +34,7 @@ export default function Header() {
 }
 
 function SearchItem({ userId }: { userId: string }) {
-  const { searchQuery, setSearchQuery } = useSemanticSearchContext();
+  const { searchQuery, setSearchQuery } = useFuzzySearchContext();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;

@@ -50,6 +50,13 @@
       "when": 1759402708115,
       "tag": "0006_bizarre_firestar",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1766775673373,
+      "tag": "0007_keen_power_man",
+      "breakpoints": true
     }
   ]
 }

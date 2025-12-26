@@ -50,9 +50,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.89.0
         version: 5.89.0(@tanstack/react-query@5.89.0(react@19.1.0))(react@19.1.0)
-      '@upstash/search':
-        specifier: ^0.1.5
-        version: 0.1.5
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -68,6 +65,9 @@ importers:
       drizzle-orm:
         specifier: ^0.44.5
         version: 0.44.5(@neondatabase/serverless@1.0.1)(@types/pg@8.15.5)(pg@8.16.3)
+      fuse.js:
+        specifier: ^7.1.0
+        version: 7.1.0
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -1779,12 +1779,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@upstash/search@0.1.5':
-    resolution: {integrity: sha512-+vkNsxC6jRP1m1HZdnJx7MD8KqvKHlqZjZ+eJMhgnTNXIYoqeY63WBorHY8M3nN7Buhns+eRl1YUTRwnZuiwgQ==}
-
-  '@upstash/vector@1.2.2':
-    resolution: {integrity: sha512-ptQ9xnxtKqmpNK52PCcHCszlPOLxIBfjsv7ty8RoF95pkjctS9rSjTQ3Pl9bx5VFbpDj+0dMXw88WLt6swDkgQ==}
-
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
     peerDependencies:
@@ -2420,6 +2414,10 @@ packages:
 
   functions-have-names@1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
+
+  fuse.js@7.1.0:
+    resolution: {integrity: sha512-trLf4SzuuUxfusZADLINj+dE8clK1frKdmqiJNb1Es75fmI5oY6X2mxLVUciLLjxqw/xr72Dhy+lER6dGd02FQ==}
+    engines: {node: '>=10'}
 
   get-east-asian-width@1.4.0:
     resolution: {integrity: sha512-QZjmEOC+IT1uk6Rx0sX22V6uHWVwbdbxf1faPqJ1QhLdGgsRGCZoyaQBm/piRdJy/D2um6hM1UP7ZEeQ4EkP+Q==}
@@ -5264,12 +5262,6 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.11.1':
     optional: true
 
-  '@upstash/search@0.1.5':
-    dependencies:
-      '@upstash/vector': 1.2.2
-
-  '@upstash/vector@1.2.2': {}
-
   acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
       acorn: 8.15.0
@@ -6021,6 +6013,8 @@ snapshots:
       is-callable: 1.2.7
 
   functions-have-names@1.2.3: {}
+
+  fuse.js@7.1.0: {}
 
   get-east-asian-width@1.4.0: {}
 

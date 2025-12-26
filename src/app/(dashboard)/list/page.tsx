@@ -1,7 +1,7 @@
 "use client"; // This directive marks it as a Client Component
 
 import { SeparatorBorder } from "@/components/ui/seperator";
-import { SemanticSearchProvider } from "@/context/SemanticSearchContext";
+import { FuzzySearchProvider } from "@/context/FuzzySearchContext";
 import { EnsureOnboarding } from "@/service/user/ensure-onboarding";
 import { useWishlistItems } from "@/service/wishlist-item/wishlist-item"; // Import the client-side hook
 import { Loader } from "lucide-react";
@@ -85,9 +85,9 @@ function DashboardContent() {
 export default function DashboardPage() {
   return (
     <Suspense fallback={<div className="p-8">Loading...</div>}>
-      <SemanticSearchProvider>
+      <FuzzySearchProvider>
         <DashboardContent />
-      </SemanticSearchProvider>
+      </FuzzySearchProvider>
     </Suspense>
   );
 }

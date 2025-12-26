@@ -26,12 +26,6 @@ export const user = pgTable("user", {
     "use_working_days_for_calculation"
   ).default(true),
 
-  //semantic store sync metadata
-  isSynchronisedWithVectorStore: boolean(
-    "is_synchronised_with_vector_store"
-  ).default(false),
-  lastSyncedAt: timestamp("last_synced_at"),
-
   //record metadata
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),

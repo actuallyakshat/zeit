@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  SemanticSearchProvider,
-  useSemanticSearchContext,
-} from "@/context/SemanticSearchContext";
+import { useFuzzySearchContext } from "@/context/FuzzySearchContext";
 import useToggleListType from "@/hooks/useToggleListType";
 import {
   usePaginatedWishlistItems,
@@ -24,8 +21,7 @@ export default function ItemsWrapper() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const limit = 12;
 
-  const { searchPending, searchQuery, searchResults } =
-    useSemanticSearchContext();
+  const { searchPending, searchQuery, searchResults } = useFuzzySearchContext();
 
   // Reset to first page when purchased filter changes
   useEffect(() => {
@@ -66,12 +62,10 @@ export default function ItemsWrapper() {
 
   if (searchQuery) {
     return (
-      <SemanticSearchProvider>
-        <SearchResults
-          isLoading={searchPending}
-          searchResults={searchResults as WishlistItem[]}
-        />
-      </SemanticSearchProvider>
+      <SearchResults
+        isLoading={searchPending}
+        searchResults={searchResults as WishlistItem[]}
+      />
     );
   }
 
@@ -141,7 +135,7 @@ function SearchResults({
 }) {
   if (isLoading) {
     return (
-      <div className="p-5">
+      <div className="p-5 flex-1 border-x border-dashed">
         <div className="items-grid gap-4 mb-8">
           {[...Array(6)].map((_, index) => (
             <div
@@ -156,7 +150,7 @@ function SearchResults({
 
   if (!isLoading && (!searchResults || searchResults?.length === 0)) {
     return (
-      <div className="p-5 flex flex-col gap-1">
+      <div className="p-5 flex flex-col gap-1 flex-1 border-x border-dashed h-full">
         <h1 className="text-2xl tracking-tight">No results found</h1>
         <p className="text-lg">
           We couldn&apos;t really find what you are looking for. How about you
@@ -167,10 +161,12 @@ function SearchResults({
   }
 
   return (
-    <div className="items-grid gap-4">
-      {searchResults?.map((item: WishlistItem, index: number) => (
-        <ItemCard key={item.id} index={index} item={item} />
-      ))}
+    <div className="p-5 flex-1 border-x border-dashed h-full">
+      <div className="items-grid gap-4">
+        {searchResults?.map((item: WishlistItem, index: number) => (
+          <ItemCard key={item.id} index={index} item={item} />
+        ))}
+      </div>
     </div>
   );
 }

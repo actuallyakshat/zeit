@@ -7,6 +7,7 @@ import {
 import { auth } from "@clerk/nextjs/server";
 import { and, desc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import Fuse from "fuse.js";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -87,13 +88,14 @@ export async function GET(req: NextRequest) {
     const limitParam = searchParams.get("limit");
     const sortByParam = searchParams.get("sortBy");
     const sortOrderParam = searchParams.get("sortOrder");
+    const searchQuery = searchParams.get("search");
 
     // Set defaults
     const page = pageParam ? parseInt(pageParam, 10) : 1;
     const limit = limitParam ? parseInt(limitParam, 10) : 12;
     const offset = (page - 1) * limit;
-    const sortBy = sortByParam || "createdAt"; // Default sort by createdAt
-    const sortOrder = sortOrderParam === "asc" ? "asc" : "desc"; // Default sort order is desc
+    const sortBy = sortByParam || "createdAt";
+    const sortOrder = sortOrderParam === "asc" ? "asc" : "desc";
 
     // Build where conditions
     const conditions = [eq(wishlistItem.userId, dbUser.id)];
@@ -110,38 +112,80 @@ export async function GET(req: NextRequest) {
       ? sortBy
       : "createdAt";
 
-    // Build and execute query with filtering, pagination, and sorting
-    const query = db
-      .select()
-      .from(wishlistItem)
-      .where(and(...conditions))
-      .limit(limit)
-      .offset(offset);
+    let items: WishlistItem[];
 
-    // Apply sorting
-    if (orderByField === "title") {
-      query.orderBy(
-        sortOrder === "asc" ? wishlistItem.title : desc(wishlistItem.title)
-      );
-    } else if (orderByField === "price") {
-      query.orderBy(
-        sortOrder === "asc" ? wishlistItem.price : desc(wishlistItem.price)
-      );
-    } else if (orderByField === "createdAt") {
-      query.orderBy(
-        sortOrder === "asc"
-          ? wishlistItem.createdAt
-          : desc(wishlistItem.createdAt)
-      );
-    } else if (orderByField === "updatedAt") {
-      query.orderBy(
-        sortOrder === "asc"
-          ? wishlistItem.updatedAt
-          : desc(wishlistItem.updatedAt)
-      );
+    if (searchQuery && searchQuery.trim() !== "") {
+      const baseQuery = db
+        .select()
+        .from(wishlistItem)
+        .where(and(...conditions));
+
+      let query;
+      if (orderByField === "title") {
+        query = baseQuery.orderBy(
+          sortOrder === "asc" ? wishlistItem.title : desc(wishlistItem.title)
+        );
+      } else if (orderByField === "price") {
+        query = baseQuery.orderBy(
+          sortOrder === "asc" ? wishlistItem.price : desc(wishlistItem.price)
+        );
+      } else if (orderByField === "createdAt") {
+        query = baseQuery.orderBy(
+          sortOrder === "asc"
+            ? wishlistItem.createdAt
+            : desc(wishlistItem.createdAt)
+        );
+      } else if (orderByField === "updatedAt") {
+        query = baseQuery.orderBy(
+          sortOrder === "asc"
+            ? wishlistItem.updatedAt
+            : desc(wishlistItem.updatedAt)
+        );
+      } else {
+        query = baseQuery.orderBy(desc(wishlistItem.createdAt));
+      }
+
+      const allItems: WishlistItem[] = await query;
+      const fuse = new Fuse(allItems, {
+        keys: ["title", "description"],
+        threshold: 0.5,
+        ignoreLocation: true,
+      });
+      const fuseResults = fuse.search(searchQuery.trim());
+      items = fuseResults.map((result) => result.item);
+    } else {
+      const baseQuery = db
+        .select()
+        .from(wishlistItem)
+        .where(and(...conditions));
+
+      let query;
+      if (orderByField === "title") {
+        query = baseQuery.orderBy(
+          sortOrder === "asc" ? wishlistItem.title : desc(wishlistItem.title)
+        );
+      } else if (orderByField === "price") {
+        query = baseQuery.orderBy(
+          sortOrder === "asc" ? wishlistItem.price : desc(wishlistItem.price)
+        );
+      } else if (orderByField === "createdAt") {
+        query = baseQuery.orderBy(
+          sortOrder === "asc"
+            ? wishlistItem.createdAt
+            : desc(wishlistItem.createdAt)
+        );
+      } else if (orderByField === "updatedAt") {
+        query = baseQuery.orderBy(
+          sortOrder === "asc"
+            ? wishlistItem.updatedAt
+            : desc(wishlistItem.updatedAt)
+        );
+      } else {
+        query = baseQuery.orderBy(desc(wishlistItem.createdAt));
+      }
+
+      items = await query.limit(limit).offset(offset);
     }
-
-    const items: WishlistItem[] = await query;
 
     return NextResponse.json({ items });
   } catch (error) {

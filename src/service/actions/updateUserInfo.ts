@@ -61,27 +61,4 @@ async function updateUserCalculationDetails(request: UpdateUserInfoRequest) {
   }
 }
 
-async function updateSemanticStoreSyncStatus(status: boolean) {
-  try {
-    const { userId: clerkId } = await auth();
-
-    if (!clerkId) {
-      throw new Error("Unauthorized");
-    }
-
-    const existingUser = await db
-      .update(user)
-      .set({
-        isSynchronisedWithVectorStore: status,
-        lastSyncedAt: new Date(),
-      })
-      .where(eq(user.clerkId, clerkId))
-      .returning();
-
-    return existingUser;
-  } catch (error) {
-    console.error("Error updating the sync status of user: ", error);
-  }
-}
-
-export { updateUserCalculationDetails, updateSemanticStoreSyncStatus };
+export { updateUserCalculationDetails };
