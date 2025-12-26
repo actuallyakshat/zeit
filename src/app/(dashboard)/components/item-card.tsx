@@ -66,9 +66,7 @@ export function ItemCard({
           <h2 className="text-xl mb-1">{item.title}</h2>
           {!preview && <ItemActions item={item} />}
         </div>
-        <DescriptionWithToolTip
-          description={item.description || "No description"}
-        />
+        <DescriptionWithToolTip description={item.description || undefined} />
         <p className="mt-1 text-base font-light">{formattedPrice}</p>
         <h3 className="font-medium mt-2">
           {getTimeToAffordRouter(
@@ -102,18 +100,20 @@ function DescriptionWithToolTip({
 }: {
   readonly description?: string;
 }) {
-  const text = description || "No description";
+  if (!description) {
+    return <div className="min-h-[40px]" />;
+  }
 
   return (
     <TooltipProvider>
       <Tooltip delayDuration={500}>
         <TooltipTrigger asChild>
           <p className="text-muted-foreground text-sm min-h-[40px] line-clamp-2 cursor-default">
-            {text}
+            {description}
           </p>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-sm break-words">
-          {text}
+          {description}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

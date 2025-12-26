@@ -1,6 +1,5 @@
 import { db } from "@/db/drizzle";
 import { user, wishlistItem } from "@/db/schema";
-import { formatActionResponse } from "@/lib/formatActionResponse";
 import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -49,16 +48,13 @@ export async function PUT(
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
-    const formattedResponse = formatActionResponse(
-      { item: updatedItem },
-      true,
-      200
-    );
-    return NextResponse.json(formattedResponse);
+    return NextResponse.json({ item: updatedItem });
   } catch (error) {
     console.error("Error updating wishlist item:", error);
-    const errorResponse = await formatActionResponse({ error }, false, 500);
-    return NextResponse.json(errorResponse);
+    return NextResponse.json(
+      { error: "Failed to update wishlist item" },
+      { status: 500 }
+    );
   }
 }
 
@@ -94,15 +90,12 @@ export async function DELETE(
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
-    const formattedResponse = formatActionResponse(
-      { message: "Success" },
-      true,
-      204
-    );
-    return NextResponse.json(formattedResponse);
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting wishlist item:", error);
-    const errorResponse = formatActionResponse({ error }, false, 500);
-    return NextResponse.json(errorResponse);
+    return NextResponse.json(
+      { error: "Failed to delete wishlist item" },
+      { status: 500 }
+    );
   }
 }

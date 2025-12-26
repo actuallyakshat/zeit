@@ -5,13 +5,24 @@ import { SemanticSearchProvider } from "@/context/SemanticSearchContext";
 import { EnsureOnboarding } from "@/service/user/ensure-onboarding";
 import { useWishlistItems } from "@/service/wishlist-item/wishlist-item"; // Import the client-side hook
 import { Loader } from "lucide-react";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Header from "../components/header";
 import ItemsWrapper from "../components/items-wrapper";
 import Stats from "../components/stats";
 
 function DashboardContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: wishlistItems, isLoading, isError, error } = useWishlistItems();
+
+  // Auto-redirect to ?purchased=false if no query params
+  useEffect(() => {
+    const purchased = searchParams.get("purchased");
+    if (purchased === null) {
+      router.replace("/list?purchased=false");
+    }
+  }, [searchParams, router]);
 
   if (isLoading) {
     return (
