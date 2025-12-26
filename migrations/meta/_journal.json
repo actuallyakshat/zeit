@@ -43,6 +43,13 @@
       "when": 1758301744007,
       "tag": "0005_living_roulette",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1759402708115,
+      "tag": "0006_bizarre_firestar",
+      "breakpoints": true
     }
   ]
 }

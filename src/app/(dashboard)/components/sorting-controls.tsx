@@ -42,6 +42,9 @@ export default function SortingControls({
     { value: "updatedAt", label: "Last Updated" },
   ];
 
+  // Check if sorting is different from default
+  const isSortingApplied = sortBy !== "createdAt" || sortOrder !== "desc";
+
   const handleSortByChange = (newSortBy: string) => {
     onSortChange(newSortBy, sortOrder);
   };
@@ -90,7 +93,7 @@ export default function SortingControls({
         </TooltipContent>
       </Tooltip>
 
-      {onClearSort && (
+      {onClearSort && isSortingApplied && (
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
